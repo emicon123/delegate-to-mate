@@ -1,0 +1,22 @@
+# Secrets / credentials
+.env
+.env.*
+public_html/wp-config.php
+
+# Legacy backup/dump scripts — hardcoded DB creds, unauthenticated, must not exist on the live site either
+public_html/backup.php
+public_html/db_dump.php
+public_html/zip.php
+
+# Site/DB backups — large binaries, contain full DB dumps
+public_html/wp-content/ai1wm-backups/
+*.wpress
+*.sql
+db_backup_*.sql
+www_backup_*.zip
+
+# Generated analysis output — regeneratable, not source
+graphify-out/
+
+# Claude Code runtime state
+.claude/*.lock

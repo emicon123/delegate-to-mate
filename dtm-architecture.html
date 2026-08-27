@@ -1,0 +1,622 @@
+<title>Delegate to Mate Migration</title>
+<style>
+  :root {
+    --paper: #f6f3ea;
+    --surface: #ffffff;
+    --ink: #1e2430;
+    --ink-soft: #565c6b;
+    --ink-faint: #8a8f9c;
+    --line: #ddd6c4;
+    --line-strong: #c7bfa8;
+    --current: #a9761f;
+    --current-soft: #f1e3c6;
+    --proposed: #21707a;
+    --proposed-soft: #d9ecec;
+    --danger: #a83a30;
+    --danger-soft: #f6e0da;
+    --font-head: "Archivo", "Arial Narrow", sans-serif;
+    --font-body: "Source Serif 4", Georgia, serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #14171d;
+      --surface: #1b1f27;
+      --ink: #e9e6dc;
+      --ink-soft: #b3b0a5;
+      --ink-faint: #767a86;
+      --line: #313644;
+      --line-strong: #3f4554;
+      --current: #dba548;
+      --current-soft: #332a17;
+      --proposed: #5cc2c9;
+      --proposed-soft: #16302f;
+      --danger: #e08277;
+      --danger-soft: #3a2321;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #14171d;
+    --surface: #1b1f27;
+    --ink: #e9e6dc;
+    --ink-soft: #b3b0a5;
+    --ink-faint: #767a86;
+    --line: #313644;
+    --line-strong: #3f4554;
+    --current: #dba548;
+    --current-soft: #332a17;
+    --proposed: #5cc2c9;
+    --proposed-soft: #16302f;
+    --danger: #e08277;
+    --danger-soft: #3a2321;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-body);
+    margin: 0;
+    padding: 0 24px 96px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  header.doc-head {
+    padding: 56px 0 28px;
+    border-bottom: 1px solid var(--line-strong);
+    margin-bottom: 36px;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(30px, 4.6vw, 44px);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+  .doc-sub {
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    line-height: 1.5;
+    margin: 0 0 20px;
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--ink-faint);
+  }
+  .meta-row b { color: var(--ink-soft); font-weight: 500; }
+
+  section { margin: 52px 0; }
+  h2 {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: -0.005em;
+    margin: 0 0 6px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  h2 .num {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ink-faint);
+  }
+  .lede {
+    color: var(--ink-soft);
+    font-size: 16px;
+    max-width: 66ch;
+    margin: 0 0 22px;
+    line-height: 1.6;
+  }
+  p { line-height: 1.65; font-size: 16.5px; max-width: 68ch; }
+  ul, ol { line-height: 1.65; font-size: 16.5px; max-width: 66ch; padding-left: 1.3em; }
+  li { margin: 5px 0; }
+  strong { font-weight: 600; }
+  code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+  code {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.1em 0.4em;
+  }
+
+  /* Alert callout */
+  .alert {
+    border: 1px solid var(--danger);
+    background: var(--danger-soft);
+    border-radius: 10px;
+    padding: 22px 24px 24px;
+    margin: 0 0 52px;
+  }
+  .alert-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--danger);
+    margin-bottom: 10px;
+  }
+  .alert-head .dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--danger); flex: none;
+  }
+  .alert p { max-width: 72ch; margin: 8px 0; font-size: 16px; }
+  .alert .fix {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  }
+  .alert .fix b { font-family: var(--font-head); font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Figures */
+  figure { margin: 26px 0 8px; }
+  .fig-wrap {
+    overflow-x: auto;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+  figure svg { display: block; width: 100%; height: auto; min-width: 640px; }
+  figcaption {
+    font-size: 13.5px;
+    color: var(--ink-faint);
+    margin-top: 10px;
+    line-height: 1.5;
+    max-width: 70ch;
+  }
+
+  /* diagram element classes */
+  .dg-node rect { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.3; }
+  .dg-node text { fill: var(--ink); }
+  .dg-node .sub { fill: var(--ink-faint); }
+  .dg-label { fill: var(--ink-faint); font-family: var(--font-mono); }
+  .dg-arrow { stroke: var(--ink-faint); stroke-width: 1.3; fill: none; }
+  .dg-cluster { fill: none; stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 3 4; }
+  .dg-cluster-label { fill: var(--ink-faint); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.04em; }
+  .dg-chip rect { fill: var(--current-soft); stroke: var(--current); stroke-width: 1; }
+  .dg-chip text { fill: var(--ink); }
+  .dg-ext rect { fill: none; stroke: var(--ink-faint); stroke-width: 1.2; stroke-dasharray: 4 3; }
+  .dg-danger-node rect { fill: var(--danger-soft); stroke: var(--danger); stroke-width: 1.4; }
+  .dg-danger-node text { fill: var(--ink); }
+  .dg-danger-arrow { stroke: var(--danger); stroke-width: 1.4; fill: none; stroke-dasharray: 5 4; }
+  .dg-proposed-node rect { fill: var(--proposed-soft); stroke: var(--proposed); stroke-width: 1.4; }
+  .dg-proposed-node text { fill: var(--ink); }
+
+  /* comparison table */
+  .cmp {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+    margin: 10px 0 4px;
+  }
+  .cmp th, .cmp td {
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .cmp th {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: var(--surface);
+    color: var(--ink-soft);
+  }
+  .cmp td.pick { background: var(--proposed-soft); }
+  .cmp-wrap { overflow-x: auto; }
+
+  .tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid currentColor;
+  }
+  .tag.rec { color: var(--proposed); background: var(--proposed-soft); }
+
+  .qa {
+    border-left: 3px solid var(--line-strong);
+    padding: 4px 0 4px 18px;
+    margin: 18px 0;
+  }
+  .qa b { display: block; font-family: var(--font-head); font-size: 15.5px; margin-bottom: 4px; }
+  .qa p { margin: 0; font-size: 15.5px; color: var(--ink-soft); }
+
+  footer.doc-foot {
+    margin-top: 70px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-faint);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<div class="page">
+
+<header class="doc-head">
+  <p class="eyebrow">Architecture read · seohost.pl shared hosting · MariaDB retained</p>
+  <h1>What's actually running delegatetomate.pl, and what to replace it with</h1>
+  <p class="doc-sub">A map of the current WordPress install as it exists on disk today, one exposure that needs closing before anything else, and a stack comparison for the rebuild — constrained to the same server.</p>
+  <div class="meta-row">
+    <span><b>WP core</b> 7.1</span>
+    <span><b>Theme</b> Dividenz (Zemez, purchased)</span>
+    <span><b>Builder</b> Elementor + Elementor Pro</span>
+    <span><b>Traffic</b> a handful of real visits/day</span>
+    <span><b>DB</b> srv48172_delegatetomate_pl</span>
+  </div>
+</header>
+
+<div class="alert">
+  <div class="alert-head"><span class="dot"></span>Before anything else — live exposure in the current web root</div>
+  <p><code>public_html/backup.php</code> is reachable by anyone, with no login and no token. Requesting it runs <code>db_dump.php</code> (a full <code>mysqldump</code>) with a <strong>hardcoded plaintext DB user/password</strong>, then <code>zip.php</code>, which zips the entire site — <code>wp-config.php</code> included — and writes both the raw <code>.sql</code> and the <code>.zip</code> straight into the public web root, where they're downloadable by anyone who requests the resulting filename.</p>
+  <p>The DB name inside <code>backup.php</code> (<code>srv48172_person-all_pl</code>) doesn't match this site's own DB (<code>srv48172_delegatetomate_pl</code>) — it looks like a leftover from another project on the same hosting account. Stale or not, the script is live, unauthenticated, and writable output lands in a public directory.</p>
+  <div class="fix">
+    <b>Before the next step</b>
+    <ul style="margin:8px 0 0;">
+      <li>Check the hosting file manager / access logs for any existing <code>db_backup_*.sql</code> or <code>www_backup_*.zip</code> in <code>public_html</code> and delete them now.</li>
+      <li>Delete or move <code>backup.php</code>, <code>db_dump.php</code>, <code>zip.php</code> out of the web root entirely — they're not part of WordPress.</li>
+      <li>Rotate the DB password they contain, on both databases in that hosting account.</li>
+    </ul>
+  </div>
+</div>
+
+<section>
+  <h2><span class="num">01</span>Current architecture</h2>
+  <p class="lede">Everything below is inferred from the files on disk — no custom plugin, no custom PHP logic beyond the purchased theme. It's a page-builder site: content lives as Elementor JSON in the database, not in template code.</p>
+
+  <figure>
+    <div class="fig-wrap">
+<svg viewBox="0 0 1060 500" role="img" aria-label="Diagram of the current WordPress architecture: a browser request flows through LiteSpeed and PHP-FPM into WordPress core, which loads the Dividenz theme and a dozen plugins before querying MariaDB, alongside a separate unauthenticated path where backup.php dumps the database and zips the web root back into public reach.">
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--ink-faint)"></path>
+    </marker>
+    <marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--danger)"></path>
+    </marker>
+  </defs>
+
+  <!-- main lane -->
+  <g class="dg-node">
+    <rect x="16" y="34" width="140" height="56" rx="7"></rect>
+    <text x="86" y="58" text-anchor="middle" font-size="12.5" font-family="var(--font-head)" font-weight="700">Visitor</text>
+    <text class="sub" x="86" y="74" text-anchor="middle" font-size="11">browser</text>
+  </g>
+
+  <g class="dg-node">
+    <rect x="226" y="26" width="190" height="72" rx="7"></rect>
+    <text x="321" y="52" text-anchor="middle" font-size="12.5" font-family="var(--font-head)" font-weight="700">seohost — shared</text>
+    <text class="sub" x="321" y="68" text-anchor="middle" font-size="11">LiteSpeed → PHP-FPM</text>
+    <text class="sub" x="321" y="83" text-anchor="middle" font-size="11">cPanel, FTP deploy</text>
+  </g>
+
+  <g class="dg-node">
+    <rect x="486" y="34" width="150" height="56" rx="7"></rect>
+    <text x="561" y="58" text-anchor="middle" font-size="12.5" font-family="var(--font-head)" font-weight="700">WordPress 7.1</text>
+    <text class="sub" x="561" y="74" text-anchor="middle" font-size="11">core bootstrap</text>
+  </g>
+
+  <g class="dg-node">
+    <rect x="866" y="26" width="178" height="72" rx="7"></rect>
+    <text x="955" y="52" text-anchor="middle" font-size="12.5" font-family="var(--font-head)" font-weight="700">MariaDB</text>
+    <text class="sub" x="955" y="68" text-anchor="middle" font-size="10.5" font-family="var(--font-mono)">srv48172_</text>
+    <text class="sub" x="955" y="81" text-anchor="middle" font-size="10.5" font-family="var(--font-mono)">delegatetomate_pl</text>
+  </g>
+
+  <path class="dg-arrow" d="M156,62 H226" marker-end="url(#a1)"></path>
+  <text class="dg-label" x="191" y="55" text-anchor="middle" font-size="10">HTTPS</text>
+  <path class="dg-arrow" d="M416,62 H486" marker-end="url(#a1)"></path>
+  <path class="dg-arrow" d="M636,62 H866" marker-end="url(#a1)"></path>
+  <text class="dg-label" x="751" y="55" text-anchor="middle" font-size="10">wpdb SQL</text>
+
+  <!-- cluster -->
+  <rect class="dg-cluster" x="296" y="150" width="470" height="150" rx="8"></rect>
+  <text class="dg-cluster-label" x="308" y="140" font-size="10.5">loaded into every request</text>
+  <path class="dg-arrow" d="M561,90 V150" marker-end="url(#a1)"></path>
+
+  <g class="dg-chip">
+    <rect x="312" y="164" width="106" height="34" rx="5"></rect>
+    <text x="365" y="185" text-anchor="middle" font-size="10.5">Dividenz theme</text>
+  </g>
+  <g class="dg-chip">
+    <rect x="428" y="164" width="106" height="34" rx="5"></rect>
+    <text x="481" y="185" text-anchor="middle" font-size="10.5">Elementor(+Pro)</text>
+  </g>
+  <g class="dg-chip">
+    <rect x="544" y="164" width="106" height="34" rx="5"></rect>
+    <text x="597" y="185" text-anchor="middle" font-size="10.5">Jet* suite ×6</text>
+  </g>
+  <g class="dg-chip">
+    <rect x="660" y="164" width="90" height="34" rx="5"></rect>
+    <text x="705" y="185" text-anchor="middle" font-size="10.5">Akismet</text>
+  </g>
+
+  <g class="dg-chip">
+    <rect x="312" y="210" width="130" height="34" rx="5"></rect>
+    <text x="377" y="231" text-anchor="middle" font-size="10.5">Contact Form 7</text>
+  </g>
+  <g class="dg-chip">
+    <rect x="452" y="210" width="122" height="34" rx="5"></rect>
+    <text x="513" y="231" text-anchor="middle" font-size="10.5">Cookie Law Info</text>
+  </g>
+  <g class="dg-chip">
+    <rect x="584" y="210" width="118" height="34" rx="5"></rect>
+    <text x="643" y="231" text-anchor="middle" font-size="10.5">Google Site Kit</text>
+  </g>
+  <g class="dg-chip">
+    <rect x="312" y="254" width="180" height="34" rx="5"></rect>
+    <text x="402" y="275" text-anchor="middle" font-size="10.5">All-in-One WP Migration</text>
+  </g>
+
+  <path class="dg-arrow" d="M766,231 H860 V90" marker-end="url(#a1)"></path>
+  <text class="dg-label" x="810" y="222" text-anchor="middle" font-size="9.5">Elementor JSON</text>
+  <text class="dg-label" x="810" y="233" text-anchor="middle" font-size="9.5">in wp_postmeta</text>
+
+  <!-- external -->
+  <g class="dg-ext">
+    <rect x="452" y="332" width="150" height="46" rx="6"></rect>
+  </g>
+  <text x="527" y="352" text-anchor="middle" font-size="10.5" font-family="var(--font-head)">SMTP</text>
+  <text class="dg-label" x="527" y="367" text-anchor="middle" font-size="9.5">outbound mail</text>
+  <path class="dg-arrow" d="M377,300 V310 H527 V332" marker-end="url(#a1)"></path>
+  <text class="dg-label" x="450" y="304" text-anchor="middle" font-size="9.5">form submit</text>
+
+  <g class="dg-ext">
+    <rect x="626" y="332" width="190" height="46" rx="6"></rect>
+  </g>
+  <text x="721" y="352" text-anchor="middle" font-size="10.5" font-family="var(--font-head)">Google Analytics / GSC</text>
+  <text class="dg-label" x="721" y="367" text-anchor="middle" font-size="9.5">external, client-side</text>
+  <path class="dg-arrow" d="M643,244 V310 H721 V332" marker-end="url(#a1)"></path>
+
+  <!-- danger lane -->
+  <g class="dg-danger-node">
+    <rect x="16" y="404" width="150" height="56" rx="7"></rect>
+    <text x="91" y="426" text-anchor="middle" font-size="12" font-family="var(--font-head)" font-weight="700">Any visitor</text>
+    <text class="sub" x="91" y="442" text-anchor="middle" font-size="10.5">or crawler / bot</text>
+  </g>
+  <g class="dg-danger-node">
+    <rect x="240" y="396" width="270" height="72" rx="7"></rect>
+    <text x="375" y="418" text-anchor="middle" font-size="12" font-family="var(--font-head)" font-weight="700">backup.php</text>
+    <text class="sub" x="375" y="434" text-anchor="middle" font-size="10">→ db_dump.php → zip.php</text>
+    <text class="sub" x="375" y="449" text-anchor="middle" font-size="9.5" font-family="var(--font-mono)">hardcoded DB creds, no auth</text>
+  </g>
+  <g class="dg-danger-node">
+    <rect x="586" y="396" width="240" height="72" rx="7"></rect>
+    <text x="706" y="420" text-anchor="middle" font-size="11.5" font-family="var(--font-head)" font-weight="700">writes into public_html</text>
+    <text class="sub" x="706" y="436" text-anchor="middle" font-size="9.5" font-family="var(--font-mono)">db_backup_*.sql</text>
+    <text class="sub" x="706" y="450" text-anchor="middle" font-size="9.5" font-family="var(--font-mono)">www_backup_*.zip</text>
+  </g>
+
+  <path class="dg-danger-arrow" d="M166,432 H240" marker-end="url(#a2)"></path>
+  <text class="dg-label" x="203" y="425" text-anchor="middle" font-size="9" fill="var(--danger)">GET, no auth</text>
+
+  <path class="dg-danger-arrow" d="M510,414 H586" marker-end="url(#a2)"></path>
+  <path class="dg-danger-arrow" d="M240,396 V110 H955 V98" marker-end="url(#a2)"></path>
+  <text class="dg-label" x="600" y="105" text-anchor="middle" font-size="9" fill="var(--danger)">mysqldump — full DB, same server</text>
+
+  <text class="dg-label" x="706" y="482" text-anchor="middle" font-size="9.5" fill="var(--danger)">predictable filename, public_html — same anonymous visitor fetches it back out</text>
+</svg>
+    </div>
+    <figcaption>Solid arrows: the normal request path. Dashed red: the exposure — an unauthenticated request triggers a full DB dump and site zip, written into the same directory it's served from.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2><span class="num">02</span>What the page actually is</h2>
+  <p class="lede">One landing page, nine sections, no blog in use, no user accounts, no e-commerce. The "app" is a marketing page plus a contact form.</p>
+
+  <figure>
+    <div class="fig-wrap">
+<svg viewBox="0 0 1040 250" role="img" aria-label="Flow diagram of the single landing page, showing nine sections in scroll order from header through hero, audience, two service offers, value props, testimonials, FAQ, and footer CTA.">
+  <defs>
+    <marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--ink-faint)"></path>
+    </marker>
+  </defs>
+  <!-- row 1 -->
+  <g class="dg-node"><rect x="10" y="20" width="110" height="52" rx="6"></rect><text x="65" y="42" text-anchor="middle" font-size="11" font-family="var(--font-head)" font-weight="700">Header/Nav</text><text class="sub" x="65" y="57" text-anchor="middle" font-size="9.5">sticky menu</text></g>
+  <g class="dg-node"><rect x="152" y="20" width="150" height="52" rx="6"></rect><text x="227" y="42" text-anchor="middle" font-size="11" font-family="var(--font-head)" font-weight="700">Hero</text><text class="sub" x="227" y="57" text-anchor="middle" font-size="9">"Prawa Ręka do prowadzenia…"</text></g>
+  <g class="dg-node"><rect x="334" y="20" width="150" height="52" rx="6"></rect><text x="409" y="42" text-anchor="middle" font-size="11" font-family="var(--font-head)" font-weight="700">Dla kogo</text><text class="sub" x="409" y="57" text-anchor="middle" font-size="9">audience framing</text></g>
+  <g class="dg-node"><rect x="516" y="20" width="170" height="52" rx="6"></rect><text x="601" y="42" text-anchor="middle" font-size="11" font-family="var(--font-head)" font-weight="700">Usługa 01</text><text class="sub" x="601" y="57" text-anchor="middle" font-size="9">Abonament "Prawa Ręka"</text></g>
+  <g class="dg-node"><rect x="718" y="20" width="160" height="52" rx="6"></rect><text x="798" y="42" text-anchor="middle" font-size="11" font-family="var(--font-head)" font-weight="700">Usługa 02</text><text class="sub" x="798" y="57" text-anchor="middle" font-size="9">Concierge Auto</text></g>
+
+  <path class="dg-arrow" d="M120,46 H152" marker-end="url(#a3)"></path>
+  <path class="dg-arrow" d="M302,46 H334" marker-end="url(#a3)"></path>
+  <path class="dg-arrow" d="M484,46 H516" marker-end="url(#a3)"></path>
+  <path class="dg-arrow" d="M686,46 H718" marker-end="url(#a3)"></path>
+  <path class="dg-arrow" d="M798,72 V100 H878 V128" marker-end="url(#a3)"></path>
+
+  <!-- row 2 -->
+  <g class="dg-node"><rect x="718" y="140" width="160" height="52" rx="6"></rect><text x="798" y="162" text-anchor="middle" font-size="11" font-family="var(--font-head)" font-weight="700">Dlaczego</text><text class="sub" x="798" y="177" text-anchor="middle" font-size="9">4 value props</text></g>
+  <g class="dg-node"><rect x="536" y="140" width="150" height="52" rx="6"></rect><text x="611" y="162" text-anchor="middle" font-size="11" font-family="var(--font-head)" font-weight="700">Opinie</text><text class="sub" x="611" y="177" text-anchor="middle" font-size="9">3 testimonials</text></g>
+  <g class="dg-node"><rect x="354" y="140" width="150" height="52" rx="6"></rect><text x="429" y="162" text-anchor="middle" font-size="11" font-family="var(--font-head)" font-weight="700">FAQ</text><text class="sub" x="429" y="177" text-anchor="middle" font-size="9">4 questions</text></g>
+  <g class="dg-proposed-node"><rect x="152" y="140" width="170" height="52" rx="6"></rect><text x="237" y="162" text-anchor="middle" font-size="11" font-family="var(--font-head)" font-weight="700">CTA + Footer</text><text class="sub" x="237" y="177" text-anchor="middle" font-size="9">"Umów rozmowę", contact</text></g>
+
+  <path class="dg-arrow" d="M718,166 H686" marker-end="url(#a3)"></path>
+  <path class="dg-arrow" d="M536,166 H504" marker-end="url(#a3)"></path>
+  <path class="dg-arrow" d="M354,166 H322" marker-end="url(#a3)"></path>
+
+  <text class="dg-label" x="10" y="228" font-size="11">all nine sections are one WordPress page — content stored as Elementor JSON in wp_postmeta, not in template files</text>
+</svg>
+    </div>
+    <figcaption>Scroll order of the single published page. No blog posts, no CPTs, no logged-in area — this is the entire "application."</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2><span class="num">03</span>What the host actually allows</h2>
+  <p class="lede">Since the app has to stay on this server, its runtime menu — not preference — sets the boundaries of the stack choice.</p>
+  <ul>
+    <li><strong>Confirmed:</strong> LiteSpeed, PHP 5.6–8.5, MySQL/MariaDB, cPanel, FTP — what's serving the site today.</li>
+    <li><strong>Confirmed:</strong> seohost's cPanel includes an Application Manager for <strong>Node.js</strong> (and Python) apps via Phusion Passenger, plus SSH access — no manual reverse-proxy setup needed.</li>
+    <li><strong>Not offered:</strong> no evidence of Go (or any arbitrary-binary) support in seohost's shared plans — Passenger's app manager covers Node and Python specifically. Go would need a VPS.</li>
+  </ul>
+  <p>That rules out your Go guess for this server, unless the plan gets upgraded to a VPS later. React survives either way — the open question is whether it needs a live Node process behind it at all.</p>
+</section>
+
+<section>
+  <h2><span class="num">04</span>Stack options, same server</h2>
+  <p class="lede">Three ways to run the rebuilt site on this host. The difference that matters: how many moving parts sit behind each page view.</p>
+
+  <figure>
+    <div class="fig-wrap">
+<svg viewBox="0 0 1040 430" role="img" aria-label="Three side-by-side request paths comparing the current WordPress stack, a proposed static-first React build, and an alternative Node.js dynamic stack, showing hop count and database dependency for each.">
+  <defs>
+    <marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--ink-faint)"></path>
+    </marker>
+  </defs>
+
+  <text x="170" y="24" text-anchor="middle" font-size="12" font-family="var(--font-head)" font-weight="700">Current — WordPress</text>
+  <text x="520" y="24" text-anchor="middle" font-size="12" font-family="var(--font-head)" font-weight="700" fill="var(--proposed)">Proposed — static-first</text>
+  <text x="870" y="24" text-anchor="middle" font-size="12" font-family="var(--font-head)" font-weight="700">Alternative — Node dynamic</text>
+
+  <!-- lane 1 -->
+  <g class="dg-node"><rect x="80" y="40" width="180" height="34" rx="5"></rect><text x="170" y="61" text-anchor="middle" font-size="10.5">Browser</text></g>
+  <path class="dg-arrow" d="M170,74 V92" marker-end="url(#a4)"></path>
+  <g class="dg-node"><rect x="80" y="92" width="180" height="34" rx="5"></rect><text x="170" y="113" text-anchor="middle" font-size="10.5">LiteSpeed</text></g>
+  <path class="dg-arrow" d="M170,126 V144" marker-end="url(#a4)"></path>
+  <g class="dg-node"><rect x="80" y="144" width="180" height="34" rx="5"></rect><text x="170" y="165" text-anchor="middle" font-size="10.5">PHP-FPM</text></g>
+  <path class="dg-arrow" d="M170,178 V196" marker-end="url(#a4)"></path>
+  <g class="dg-node"><rect x="80" y="196" width="180" height="34" rx="5"></rect><text x="170" y="217" text-anchor="middle" font-size="10.5">WP + Elementor render</text></g>
+  <path class="dg-arrow" d="M170,230 V248" marker-end="url(#a4)"></path>
+  <g class="dg-node"><rect x="80" y="248" width="180" height="34" rx="5"></rect><text x="170" y="269" text-anchor="middle" font-size="10.5">MariaDB query</text></g>
+  <path class="dg-arrow" d="M170,282 V300" marker-end="url(#a4)"></path>
+  <g class="dg-node"><rect x="80" y="300" width="180" height="34" rx="5"></rect><text x="170" y="321" text-anchor="middle" font-size="10.5">HTML response</text></g>
+  <text class="dg-label" x="170" y="356" text-anchor="middle" font-size="10">6 hops · DB hit every view</text>
+  <text class="dg-label" x="170" y="372" text-anchor="middle" font-size="10">edits via wp-admin GUI</text>
+
+  <!-- lane 2 -->
+  <g class="dg-proposed-node"><rect x="430" y="40" width="180" height="34" rx="5"></rect><text x="520" y="61" text-anchor="middle" font-size="10.5">Browser</text></g>
+  <path class="dg-arrow" d="M520,74 V92" marker-end="url(#a4)"></path>
+  <g class="dg-proposed-node"><rect x="430" y="92" width="180" height="34" rx="5"></rect><text x="520" y="113" text-anchor="middle" font-size="10.5">LiteSpeed</text></g>
+  <path class="dg-arrow" d="M520,126 V144" marker-end="url(#a4)"></path>
+  <g class="dg-proposed-node"><rect x="430" y="144" width="180" height="34" rx="5"></rect><text x="520" y="165" text-anchor="middle" font-size="10.5">static HTML/CSS/JS</text></g>
+  <text class="dg-label" x="520" y="188" text-anchor="middle" font-size="9">pre-built by React/Astro,</text>
+  <text class="dg-label" x="520" y="200" text-anchor="middle" font-size="9">shipped over FTP/rsync</text>
+  <path class="dg-arrow" d="M520,212 V300" marker-end="url(#a4)"></path>
+  <g class="dg-proposed-node"><rect x="430" y="300" width="180" height="34" rx="5"></rect><text x="520" y="321" text-anchor="middle" font-size="10.5">HTML response</text></g>
+
+  <path class="dg-arrow" d="M610,161 H660 V248" marker-end="url(#a4)"></path>
+  <g class="dg-node"><rect x="660" y="248" width="150" height="34" rx="5"></rect><text x="735" y="269" text-anchor="middle" font-size="10">contact form → PHP mail</text></g>
+  <path class="dg-arrow" d="M735,282 V300" marker-end="url(#a4)"></path>
+  <g class="dg-ext"><rect x="660" y="300" width="150" height="34" rx="5"></rect><text x="735" y="321" text-anchor="middle" font-size="10">SMTP</text></g>
+
+  <text class="dg-label" x="520" y="356" text-anchor="middle" font-size="10" fill="var(--proposed)">3 hops for a page view · no DB</text>
+  <text class="dg-label" x="520" y="372" text-anchor="middle" font-size="10">edits via a rebuild + deploy</text>
+
+  <!-- lane 3 -->
+  <g class="dg-node"><rect x="780" y="40" width="180" height="34" rx="5"></rect><text x="870" y="61" text-anchor="middle" font-size="10.5">Browser</text></g>
+  <path class="dg-arrow" d="M870,74 V92" marker-end="url(#a4)"></path>
+  <g class="dg-node"><rect x="780" y="92" width="180" height="34" rx="5"></rect><text x="870" y="113" text-anchor="middle" font-size="10.5">LiteSpeed</text></g>
+  <path class="dg-arrow" d="M870,126 V144" marker-end="url(#a4)"></path>
+  <g class="dg-node"><rect x="780" y="144" width="180" height="34" rx="5"></rect><text x="870" y="165" text-anchor="middle" font-size="10.5">Passenger</text></g>
+  <path class="dg-arrow" d="M870,178 V196" marker-end="url(#a4)"></path>
+  <g class="dg-node"><rect x="780" y="196" width="180" height="34" rx="5"></rect><text x="870" y="217" text-anchor="middle" font-size="10.5">Node.js (Next.js) process</text></g>
+  <path class="dg-arrow" d="M870,230 V248" marker-end="url(#a4)"></path>
+  <g class="dg-node"><rect x="780" y="248" width="180" height="34" rx="5"></rect><text x="870" y="269" text-anchor="middle" font-size="10.5">MariaDB (optional)</text></g>
+  <path class="dg-arrow" d="M870,282 V300" marker-end="url(#a4)"></path>
+  <g class="dg-node"><rect x="780" y="300" width="180" height="34" rx="5"></rect><text x="870" y="321" text-anchor="middle" font-size="10.5">HTML response</text></g>
+  <text class="dg-label" x="870" y="356" text-anchor="middle" font-size="10">5 hops · a process to keep alive</text>
+  <text class="dg-label" x="870" y="372" text-anchor="middle" font-size="10">worth it only if you need per-request logic</text>
+</svg>
+    </div>
+    <figcaption>Same three questions asked of each option: how many hops does a page view take, does it depend on the database, and what does a content edit require.</figcaption>
+  </figure>
+
+  <div class="cmp-wrap">
+    <table class="cmp">
+      <tr>
+        <th>Dimension</th>
+        <th>Current: WP + Elementor</th>
+        <th>Static-first: React/Astro build <span class="tag rec">recommended</span></th>
+        <th>Node dynamic: Next.js on Passenger</th>
+      </tr>
+      <tr>
+        <td>Runtime on the server</td>
+        <td>PHP process + DB query, every request</td>
+        <td class="pick">none — files served directly by LiteSpeed</td>
+        <td>a Node process must stay up (Passenger-managed)</td>
+      </tr>
+      <tr>
+        <td>Fit for ~5 real visits/day</td>
+        <td>works, but pays DB + plugin-boot cost nobody needs</td>
+        <td class="pick">exact fit — cost scales with build, not traffic</td>
+        <td>over-provisioned for this traffic today</td>
+      </tr>
+      <tr>
+        <td>Deploy from FTP-only access</td>
+        <td>already how it's deployed</td>
+        <td class="pick">drop the build output in <code>public_html</code>, done</td>
+        <td>needs the Node App Manager / SSH, not plain FTP</td>
+      </tr>
+      <tr>
+        <td>Contact form</td>
+        <td>Contact Form 7 → wp_mail()</td>
+        <td class="pick">small PHP endpoint (kept) or a form API (Web3Forms/Formspree)</td>
+        <td>an API route in the Next.js app</td>
+      </tr>
+      <tr>
+        <td>When it stops fitting</td>
+        <td>—</td>
+        <td>the day you need per-request logic: auth, live pricing, a booking calendar</td>
+        <td class="pick">that's the day this becomes the right call instead</td>
+      </tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">05</span>Recommendation</h2>
+  <p><strong>Start static-first:</strong> React (via Astro, or plain Vite) built to static HTML/CSS/JS, pushed to <code>public_html</code> over FTP — no PHP, no WordPress, no DB in the request path for a page view. It matches the traffic, matches the FTP-only deploy habit already in place, and removes the entire plugin/DB attack surface that produced this session's security finding. Keep the contact form server-side via a single small PHP script (the one piece of backend logic that still earns its keep), or hand it to a third-party form endpoint if even that's unwanted.</p>
+  <p>Drop Go for this server — it's not in seohost's supported runtimes without a VPS upgrade, and nothing about a low-traffic marketing page needs it. If a future feature genuinely needs per-request server logic (a login area, live pricing, a booking flow), the Node.js path is already there in cPanel and doesn't require re-deciding the front end — Next.js can render the same React components dynamically.</p>
+
+  <div class="qa">
+    <b>Open before scoping the build</b>
+    <p>Does anyone who isn't touching code need to edit copy or pricing later? If yes, a static build needs either a lightweight headless CMS or a "content lives in the repo, edits go through a PR" workflow — worth deciding now, since it shapes the build.</p>
+  </div>
+  <div class="qa">
+    <b>Contact form destination</b>
+    <p>Keep PHP <code>mail()</code>/SMTP on this host, or route through a hosted form API? The latter drops PHP from the stack entirely, at the cost of a third-party dependency for lead capture.</p>
+  </div>
+  <div class="qa">
+    <b>Anything beyond this one page planned?</b>
+    <p>A blog, multi-language, or gated content would tilt the answer toward Next.js sooner rather than later — worth naming now if it's on the roadmap, even loosely.</p>
+  </div>
+</section>
+
+<footer class="doc-foot">
+  delegatetomate.pl · read from the FTP snapshot in public_html · seohost.pl shared hosting, LiteSpeed, MariaDB
+</footer>
+
+</div>
