@@ -1,0 +1,48 @@
+---
+const year = new Date().getFullYear();
+const base = import.meta.env.BASE_URL;
+---
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="wordmark" style="color:white; margin-bottom:10px">delegate <span style="color:var(--amber)">to mate</span></div>
+        <p class="footer-muted">
+          Delegate To Mate — wsparcie biznesowe dla przedsiębiorców, którzy chcą odzyskać czas i&nbsp;skupić się na rozwoju swojej firmy.
+          Pomagam właścicielom JDG i&nbsp;małych zespołów delegować operacje, sprzedaż i&nbsp;projekty.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="footer-title">Strony</h3>
+        <nav class="footer-links" aria-label="Linki w stopce">
+          <a href="#uslugi">Usługi</a>
+          <a href="#korzysci">Korzyści</a>
+          <a href="#opinie">Opinie</a>
+          <a href="#faq">FAQ</a>
+          <a href={`${base}polityka-prywatnosci/`}>Polityka prywatności</a>
+        </nav>
+      </div>
+
+      <div>
+        <h3 class="footer-title">Kontakt</h3>
+        <div class="footer-links">
+          <a href="tel:+48796017986">Tel: (+48) 796 017 986</a>
+          <span>24/7 dostępny dla Ciebie</span>
+          <span>Marii Konopnickiej 22, 43-200 Pszczyna</span>
+          <a href="mailto:kontakt@delegatetomate.pl">kontakt@delegatetomate.pl</a>
+        </div>
+        <div class="socials" style="margin-top:14px">
+          <a href="https://www.facebook.com/delegate.to.mate" aria-label="Facebook" target="_blank" rel="noopener noreferrer">f</a>
+          <a href="https://www.instagram.com/delegate_to_mate" aria-label="Instagram" target="_blank" rel="noopener noreferrer">◎</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© {year} DELEGATE TO MATE. Wszelkie prawa zastrzeżone.</span>
+      <span style="opacity:0.7">Strona statyczna · brak WordPressa · brak bazy w&nbsp;ścieżce żądania</span>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,60 @@
+---
+const phone = "(+48) 796 017 986";
+const telHref = "tel:+48796017986";
+---
+
+<header class="site-header" role="banner">
+  <div class="container site-header__inner">
+    <a href="#top" class="wordmark" aria-label="Delegate To Mate — strona główna">
+      delegate <span>to mate</span>
+      <small>Wsparcie dla Twojej firmy</small>
+    </a>
+
+    <nav class="nav" aria-label="Główna nawigacja">
+      <a href="#uslugi">Usługi</a>
+      <a href="#korzysci">Korzyści</a>
+      <a href="#opinie">Opinie</a>
+      <a href="#kontakt">Kontakt</a>
+    </nav>
+
+    <div style="display:flex;gap:10px;align-items:center">
+      <a href={telHref} class="btn btn--dark nav-cta">Umów rozmowę</a>
+      <button
+        class="mobile-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        aria-label="Otwórz menu"
+        id="menu-toggle"
+      >
+        <span aria-hidden="true">☰</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="container">
+    <nav id="mobile-nav" class="mobile-panel" aria-hidden="true" aria-label="Menu mobilne">
+      <a href="#uslugi">Usługi</a>
+      <a href="#korzysci">Korzyści</a>
+      <a href="#opinie">Opinie</a>
+      <a href="#kontakt">Kontakt</a>
+      <a href={telHref} class="btn btn--amber" style="margin-top:8px">Zadzwoń: {phone}</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('menu-toggle');
+  const panel = document.getElementById('mobile-nav');
+  btn?.addEventListener('click', () => {
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!expanded));
+    panel?.setAttribute('aria-hidden', String(expanded));
+  });
+  panel?.querySelectorAll('a').forEach((a) => {
+    a.addEventListener('click', () => {
+      btn?.setAttribute('aria-expanded', 'false');
+      panel?.setAttribute('aria-hidden', 'true');
+    });
+  });
+</script>

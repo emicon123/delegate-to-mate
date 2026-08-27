@@ -1,0 +1,75 @@
+---
+import platkowskiLogo from '../../assets/brands/platkowski.png';
+import horizonLogo from '../../assets/brands/horizon.jpeg';
+import bartomLogo from '../../assets/brands/bartom.png';
+import artbudLogo from '../../assets/brands/artbud.png';
+import budspawLogo from '../../assets/brands/budspaw.png';
+import gelatoLogo from '../../assets/brands/gelato.png';
+const brands = [
+  { src: platkowskiLogo, alt: 'Płatkowski.net', w: 110 },
+  { src: horizonLogo, alt: 'Horizon', w: 96 },
+  { src: bartomLogo, alt: 'Bartom', w: 86 },
+  { src: artbudLogo, alt: 'Art-Bud', w: 86 },
+  { src: gelatoLogo, alt: 'Gelato Nobile', w: 96 },
+  { src: budspawLogo, alt: 'Budspaw', w: 90 },
+];
+---
+
+<section class="hero" id="top" aria-labelledby="hero-heading">
+  <div class="container">
+    <div class="hero__grid">
+      <div>
+        <span class="pill">Nowa oferta — wsparcie operacyjne dla firm</span>
+        <h1 id="hero-heading">
+          Innowacyjne <em>rozwiązania</em> dla Twojego biznesu
+        </h1>
+        <p class="hero__sub">
+          Twoje wsparcie i efektywne zarządzanie zasobami. Pomagam właścicielom małych firm
+          odzyskać czas i skupić się na rozwoju — przejmuję operacje, rekrutację, sprzedaż i negocjacje.
+        </p>
+        <div class="hero__ctas">
+          <a href="#kontakt" class="btn btn--amber">Umów rozmowę</a>
+          <a href="#uslugi" class="btn btn--outline-light">Poznaj usługi</a>
+        </div>
+      </div>
+
+      <div class="hero__cards" aria-hidden="true">
+        <div class="hero__mini">
+          <strong>Wsparcie operacyjne</strong>
+          <p>Porządkuję procesy i pilnuję terminów, żebyś mógł zająć się rozwojem firmy.</p>
+        </div>
+        <div class="hero__mini">
+          <strong>Pozyskiwanie klientów</strong>
+          <p>Docieram do kontrahentów, prezentuję ofertę i domykam transakcje.</p>
+        </div>
+        <div class="hero__mini" style="grid-column:1/-1; display:flex; gap:14px; align-items:center">
+          <div style="width:44px;height:44px;border-radius:12px;background:var(--amber);display:grid;place-items:center;color:var(--navy);font-weight:700">✓</div>
+          <div>
+            <strong style="font-size:15px;margin:0">Dla firm 1–20 osób</strong>
+            <p style="margin:0">Elastycznie — płacisz za efekt, nie za etat.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__brands" aria-label="Zaufali nam">
+      <span class="hero__brands-label">Zaufali nam:</span>
+      <div class="hero__brands-list">
+        {
+          brands.map((b) => (
+            <img
+              src={b.src.src}
+              width={b.src.width}
+              height={b.src.height}
+              alt={b.alt}
+              class="brand-logo"
+              loading="eager"
+              decoding="async"
+              style={`width:${b.w}px;height:auto`}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,16 @@
+# Build output — two build variants, kept out of git
+dist/
+dist-*/
+
+# Dependencies
+node_modules/
+
+# Astro generated types
+.astro/
+
+# Env files (none expected here; site has no server secrets)
+.env
+.env.*
+
+# Editor/OS
+.DS_Store

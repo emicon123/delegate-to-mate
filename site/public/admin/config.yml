@@ -1,0 +1,55 @@
+backend:
+  name: github
+  repo: anomalyco/delegatetomate
+  branch: main
+
+media_folder: "site/src/assets/uploads"
+public_folder: "/src/assets/uploads"
+
+collections:
+  - name: "services"
+    label: "Usługi"
+    folder: "site/src/content/services"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Tytuł", name: "title", widget: "string" }
+      - { label: "Kolejność", name: "order", widget: "number", value_type: "int" }
+      - { label: "Ikona", name: "icon", widget: "string", required: false }
+      - { label: "Opis krótki", name: "description", widget: "text" }
+      - { label: "Szczegóły", name: "details", widget: "text", required: false }
+      - { label: "Treść", name: "body", widget: "markdown", required: false }
+
+  - name: "benefits"
+    label: "Korzyści"
+    folder: "site/src/content/benefits"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Tytuł", name: "title", widget: "string" }
+      - { label: "Kolejność", name: "order", widget: "number", value_type: "int" }
+      - { label: "Opis", name: "description", widget: "text" }
+      - { label: "Treść", name: "body", widget: "markdown", required: false }
+
+  - name: "testimonials"
+    label: "Opinie"
+    folder: "site/src/content/testimonials"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Firma", name: "company", widget: "string" }
+      - { label: "Cytat", name: "quote", widget: "text" }
+      - { label: "Autor", name: "author", widget: "string", required: false }
+      - { label: "Kolejność", name: "order", widget: "number", value_type: "int" }
+      - { label: "Treść", name: "body", widget: "markdown", required: false }
+
+  - name: "faq"
+    label: "FAQ"
+    folder: "site/src/content/faq"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Pytanie", name: "question", widget: "string" }
+      - { label: "Odpowiedź", name: "answer", widget: "text" }
+      - { label: "Kolejność", name: "order", widget: "number", value_type: "int" }
+      - { label: "Treść", name: "body", widget: "markdown", required: false }

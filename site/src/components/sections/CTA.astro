@@ -1,0 +1,35 @@
+---
+import ContactForm from '../ContactForm';
+const phone = "(+48) 796 017 986";
+const telHref = "tel:+48796017986";
+---
+
+<section class="section section--cream" id="kontakt" aria-labelledby="cta-heading" style="padding-bottom:0">
+  <div class="container">
+    <div class="cta-band">
+      <div>
+        <span class="pill">Kontakt</span>
+        <h2 id="cta-heading">Gotów odzyskać czas na rozwój firmy?</h2>
+        <p>
+          Delegate To Mate to wsparcie biznesowe dla przedsiębiorców, którzy chcą odzyskać czas i&nbsp;skupić się na rozwoju.
+          Pomagam właścicielom jednoosobowych działalności i&nbsp;małych zespołów w&nbsp;delegowaniu zadań operacyjnych, sprzedażowych oraz projektowych.
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center">
+          <a href={telHref} class="btn btn--amber">Zadzwoń: {phone}</a>
+          <span class="cta-phone"><small>dostępny 24/7</small></span>
+        </div>
+        <p style="margin-top:14px; font-size:13px; color:var(--text-on-navy-muted)">
+          Marii Konopnickiej 22, 43-200 Pszczyna · <a href="mailto:kontakt@delegatetomate.pl" style="color:white; text-decoration:underline; text-underline-offset:3px">kontakt@delegatetomate.pl</a> — odpowiada Maciej
+        </p>
+      </div>
+
+      <div class="form-card" aria-labelledby="form-heading">
+        <h3 id="form-heading">Napisz wiadomość</h3>
+        <p>Odpowiem tego samego dnia. Pola oznaczone są walidowane w&nbsp;przeglądarce — bez przeładowań.</p>
+        <ContactForm client:load />
+      </div>
+    </div>
+
+    <div style="height:36px" aria-hidden="true"></div>
+  </div>
+</section>

@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/sections/Header.astro';
+import Hero from '../components/sections/Hero.astro';
+import Intro from '../components/sections/Intro.astro';
+import Services from '../components/sections/Services.astro';
+import Benefits from '../components/sections/Benefits.astro';
+import Testimonials from '../components/sections/Testimonials.astro';
+import FAQ from '../components/sections/FAQ.astro';
+import CTA from '../components/sections/CTA.astro';
+import Footer from '../components/sections/Footer.astro';
+
+const title = 'DELEGATE TO MATE — Innowacyjne rozwiązania dla Twojego biznesu';
+const description =
+  'DELEGATE TO MATE to wszechstronne wsparcie dla firm — wsparcie operacyjne, koordynacja zespołu, rekrutacja, pośrednictwo zakupowe i pozyskiwanie klientów. Odzyskaj czas na rozwój.';
+const canonical = 'https://www.delegatetomate.pl/';
+---
+
+<BaseLayout title={title} description={description} canonical={canonical}>
+  <Header />
+  <main id="main">
+    <Hero />
+    <Intro />
+    <Services />
+    <Benefits />
+    <Testimonials />
+    <FAQ />
+    <CTA />
+  </main>
+  <Footer />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "DELEGATE TO MATE",
+    url: canonical,
+    telephone: "+48 796 017 986",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Marii Konopnickiej 22",
+      postalCode: "43-200",
+      addressLocality: "Pszczyna",
+      addressCountry: "PL"
+    },
+    sameAs: ["https://www.facebook.com/delegate.to.mate", "https://www.instagram.com/delegate_to_mate"]
+  })} />
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "DELEGATE TO MATE",
+    url: canonical,
+    inLanguage: "pl-PL"
+  })} />
+</BaseLayout>

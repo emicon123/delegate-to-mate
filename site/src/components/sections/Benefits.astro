@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+const benefits = (await getCollection('benefits')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="section section--navy" id="korzysci" aria-labelledby="benefits-heading">
+  <div class="container">
+    <div style="max-width:780px; margin:0 auto 36px; text-align:center">
+      <span class="pill">Dlaczego Delegate To Mate</span>
+      <h2 id="benefits-heading" class="h-section h-section--navy">Korzyści współpracy z&nbsp;DELEGATE&nbsp;TO&nbsp;MATE</h2>
+      <p class="lead lead--on-navy" style="margin-inline:auto">
+        Osiem powodów, dla których przedsiębiorcy powierzają mi operacje, rekrutację i&nbsp;sprzedaż.
+      </p>
+    </div>
+
+    <div class="benefits-grid" role="list">
+      {
+        benefits.map((b) => (
+          <article class="benefit-card benefit-card--navy" role="listitem">
+            <h3>{b.data.title}</h3>
+            <p>{b.data.description}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

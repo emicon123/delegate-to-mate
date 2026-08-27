@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/sections/Header.astro';
+import Footer from '../components/sections/Footer.astro';
+
+const title = 'Polityka prywatności — DELEGATE TO MATE';
+const description = 'Polityka prywatności serwisu delegatetomate.pl — zasady przetwarzania danych osobowych, cookies, Twoje prawa.';
+---
+
+<BaseLayout title={title} description={description} canonical="https://www.delegatetomate.pl/polityka-prywatnosci/">
+  <Header />
+  <main id="main" class="section section--cream">
+    <div class="container" style="max-width:780px">
+      <a href={`${import.meta.env.BASE_URL}`} style="display:inline-flex;gap:8px;align-items:center;font-size:14px;font-weight:600;color:var(--navy);margin-bottom:18px">← Wróć na stronę główną</a>
+
+      <span class="pill pill--outline">Dokument prawny</span>
+      <h1 class="h-section" style="margin-top:14px">Polityka Prywatności</h1>
+
+      <div style="background:white;border:1px solid var(--border-cream);border-radius:16px;padding:28px 24px;display:grid;gap:18px;line-height:1.75;color:#334155">
+        <section>
+          <h2 style="font-family:var(--font-display);font-size:22px;margin:0 0 8px;color:var(--navy)">1. Informacje ogólne</h2>
+          <p style="margin:0">Niniejsza Polityka Prywatności określa zasady przetwarzania danych osobowych na stronie internetowej <strong>www.delegatetomate.pl</strong>, której administratorem jest:</p>
+          <p style="margin:8px 0 0"><strong>Maciej Boryś — Delegate To Mate</strong><br />Telefon: (+48) 796 017 986<br />E-mail: kontakt@delegatetomate.pl</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:var(--font-display);font-size:22px;margin:0 0 8px;color:var(--navy)">2. Jakie dane zbieramy?</h2>
+          <p style="margin:0 0 6px">Podczas korzystania ze strony możesz zostać poproszony(a) o podanie swoich danych osobowych poprzez formularz kontaktowy. Zbieramy następujące dane:</p>
+          <ul style="margin:0;padding-left:20px;display:grid;gap:4px">
+            <li>Imię</li><li>Adres e-mail</li><li>Numer telefonu</li><li>Adres IP</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 style="font-family:var(--font-display);font-size:22px;margin:0 0 8px;color:var(--navy)">3. W jakim celu przetwarzamy dane?</h2>
+          <p style="margin:0 0 6px">Twoje dane osobowe przetwarzamy wyłącznie w celu:</p>
+          <ul style="margin:0;padding-left:20px;display:grid;gap:4px">
+            <li>nawiązania kontaktu na Twoją prośbę poprzez formularz kontaktowy,</li>
+            <li>analizy statystyk ruchu na stronie za pomocą narzędzia Google Analytics (anonimowo).</li>
+          </ul>
+          <p style="margin:8px 0 0">Podanie danych jest dobrowolne, ale konieczne, abyśmy mogli się z Tobą skontaktować.</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:var(--font-display);font-size:22px;margin:0 0 8px;color:var(--navy)">4. Pliki cookies</h2>
+          <p style="margin:0 0 6px">Nasza strona wykorzystuje pliki cookies (ciasteczka), które służą do:</p>
+          <ul style="margin:0;padding-left:20px;display:grid;gap:4px">
+            <li>zapewnienia prawidłowego działania strony,</li>
+            <li>analizy ruchu na stronie (Google Analytics).</li>
+          </ul>
+          <p style="margin:8px 0 0">Możesz w każdej chwili zmienić ustawienia swojej przeglądarki w zakresie obsługi cookies.</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:var(--font-display);font-size:22px;margin:0 0 8px;color:var(--navy)">5. Udostępnianie danych</h2>
+          <p style="margin:0">Nie udostępniamy Twoich danych osobowych żadnym podmiotom trzecim. Dane są przetwarzane wyłącznie przez administratora w celach określonych powyżej.</p>
+        </section>
+
+        <section>
+          <h2 style="font-family:var(--font-display);font-size:22px;margin:0 0 8px;color:var(--navy)">6. Twoje prawa</h2>
+          <p style="margin:0 0 6px">Zgodnie z RODO masz prawo do:</p>
+          <ul style="margin:0;padding-left:20px;display:grid;gap:4px">
+            <li>dostępu do swoich danych,</li><li>ich poprawiania,</li><li>usunięcia,</li><li>ograniczenia przetwarzania,</li><li>wniesienia sprzeciwu,</li><li>przeniesienia danych,</li><li>wniesienia skargi do organu nadzorczego (PUODO).</li>
+          </ul>
+          <p style="margin:8px 0 0">W celu realizacji swoich praw skontaktuj się z nami mailowo: <a href="mailto:kontakt@delegatetomate.pl" style="text-decoration:underline;text-underline-offset:3px">kontakt@delegatetomate.pl</a></p>
+        </section>
+
+        <p style="margin:8px 0 0;font-size:13px;color:var(--text-muted);border-top:1px solid var(--border-cream);padding-top:14px">
+          Źródło treści: live strona delegatetomate.pl (2026-08-27 render). Przeniesione 1:1 bez zmian merytorycznych.
+        </p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+const testimonials = (await getCollection('testimonials')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<section class="section section--cream-2" id="opinie" aria-labelledby="testimonials-heading">
+  <div class="container">
+    <div style="text-align:center; max-width:720px; margin:0 auto 36px;">
+      <span class="pill pill--outline">Opinie</span>
+      <h2 id="testimonials-heading" class="h-section">Zaufali nam — mówią klienci</h2>
+      <p class="lead" style="margin-inline:auto">Sześć głosów firm, które już skorzystały ze wsparcia. Pełne cytaty z&nbsp;aktualnej strony — bez skrótów.</p>
+    </div>
+
+    <div class="testimonials-grid" role="list">
+      {
+        testimonials.map((t) => (
+          <article class="testimonial-card" role="listitem">
+            <div class="stars" aria-hidden="true">★★★★★</div>
+            <blockquote>“{t.data.quote}”</blockquote>
+            <footer>
+              <div style="width:40px;height:40px;border-radius:50%;background:var(--navy);color:white;display:grid;place-items:center;font-weight:700;font-size:14px;flex:0 0 40px">
+                {t.data.company.charAt(0).toUpperCase()}
+              </div>
+              <cite>
+                <strong>{t.data.company}</strong>
+                <span>{t.data.author || t.data.company}</span>
+              </cite>
+            </footer>
+          </article>
+        ))
+      }
+    </div>
+
+    <div style="text-align:center; margin-top:28px">
+      <a href="#kontakt" class="btn btn--dark">Dołącz do grona klientów</a>
+    </div>
+  </div>
+</section>

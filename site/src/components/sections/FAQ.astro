@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+const faqs = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
+const hasFaq = faqs.length > 0;
+---
+
+<section class="section section--cream" id="faq" aria-labelledby="faq-heading">
+  <div class="container">
+    <div style="text-align:center; max-width:720px; margin:0 auto 32px;">
+      <span class="pill pill--outline">FAQ</span>
+      <h2 id="faq-heading" class="h-section">Najczęstsze pytania</h2>
+      {hasFaq ? (
+        <p class="lead" style="margin-inline:auto">Wszystko, co warto wiedzieć przed startem współpracy.</p>
+      ) : (
+        <p class="lead" style="margin-inline:auto">Sekcja zarządzana z&nbsp;CMS — pojawi się automatycznie, gdy dodasz pierwsze pytania w&nbsp;<code>/admin</code>.</p>
+      )}
+    </div>
+
+    {hasFaq ? (
+      <div class="faq-list" role="list">
+        {faqs.map((f) => (
+          <details class="faq-item" role="listitem">
+            <summary>
+              <span>{f.data.question}</span>
+              <span class="faq-item__icon" aria-hidden="true">+</span>
+            </summary>
+            <div class="faq-item__answer">{f.data.answer}</div>
+          </details>
+        ))}
+      </div>
+    ) : (
+      <div style="max-width:720px;margin:0 auto;background:white;border:1px dashed var(--border-cream);border-radius:var(--radius-md);padding:24px;text-align:center;color:var(--text-muted)">
+        <p style="margin:0 0 8px;font-weight:600;color:var(--navy)">Brak pytań w&nbsp;bazie</p>
+        <p style="margin:0 0 14px;font-size:14px">Dodaj je w panelu CMS pod adresem <code style="background:var(--cream-dark);padding:2px 8px;border-radius:6px">/admin</code> — kolekcja <em>FAQ</em>. To miejsce jest gotowe na akordeon z&nbsp;&lt;details&gt;.</p>
+        <a href="#kontakt" class="btn btn--dark">Masz pytanie? Napisz</a>
+      </div>
+    )}
+  </div>
+</section>
