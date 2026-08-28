@@ -1,17 +1,29 @@
 ---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import platkowskiLogo from '../../assets/brands/platkowski.png';
 import horizonLogo from '../../assets/brands/horizon.jpeg';
 import bartomLogo from '../../assets/brands/bartom.png';
 import artbudLogo from '../../assets/brands/artbud.png';
-import budspawLogo from '../../assets/brands/budspaw.png';
 import gelatoLogo from '../../assets/brands/gelato.png';
+import budspawLogo from '../../assets/brands/budspaw.png';
+
+// Content source: docs/architecture.md "Real content mapping" — homepage Hero
+// (H1 "INNOWACYJNE" / H2 "ROZWIĄZANIA DLA TWOJEGO BIZNESU" / H4 "Twoje wsparcie
+// i efektywne zarządzanie zasobami" / CTA "NASZA FIRMA"). Two-heading live
+// structure is folded into pill (kicker) + single <h1> for correct page outline.
+const allServices = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const previewServices = allServices.slice(0, 2);
+
+// "Zaufali nam" brand strip — same 6 companies as the Opinie section, per
+// architecture.md (real logos carried over from wp-content/uploads).
 const brands = [
-  { src: platkowskiLogo, alt: 'Płatkowski.net', w: 110 },
-  { src: horizonLogo, alt: 'Horizon', w: 96 },
-  { src: bartomLogo, alt: 'Bartom', w: 86 },
-  { src: artbudLogo, alt: 'Art-Bud', w: 86 },
-  { src: gelatoLogo, alt: 'Gelato Nobile', w: 96 },
-  { src: budspawLogo, alt: 'Budspaw', w: 90 },
+  { name: 'Płatkowski.net', logo: platkowskiLogo },
+  { name: 'Horizon', logo: horizonLogo },
+  { name: 'Bartom', logo: bartomLogo },
+  { name: 'Art-Bud', logo: artbudLogo },
+  { name: 'Gelato Nobile', logo: gelatoLogo },
+  { name: 'Budspaw', logo: budspawLogo },
 ];
 ---
 
@@ -19,56 +31,36 @@ const brands = [
   <div class="container">
     <div class="hero__grid">
       <div>
-        <span class="pill">Nowa oferta — wsparcie operacyjne dla firm</span>
+        <span class="pill" style="background:rgba(201,162,39,0.14);border:1px solid rgba(201,162,39,0.22);color:var(--amber);font-size:10px;letter-spacing:0.12em">INNOWACYJNE</span>
         <h1 id="hero-heading">
-          Innowacyjne <em>rozwiązania</em> dla Twojego biznesu
+          ROZWIĄZANIA DLA&nbsp;TWOJEGO BIZNESU
         </h1>
         <p class="hero__sub">
-          Twoje wsparcie i efektywne zarządzanie zasobami. Pomagam właścicielom małych firm
-          odzyskać czas i skupić się na rozwoju — przejmuję operacje, rekrutację, sprzedaż i negocjacje.
+          Twoje wsparcie i&nbsp;efektywne zarządzanie zasobami.
         </p>
         <div class="hero__ctas">
-          <a href="#kontakt" class="btn btn--amber">Umów rozmowę</a>
-          <a href="#uslugi" class="btn btn--outline-light">Poznaj usługi</a>
+          <a href="#jak-to-dziala" class="btn btn--amber">NASZA FIRMA</a>
+          <a href="#kontakt" class="btn btn--outline-light">SKONTAKTUJ SIĘ</a>
         </div>
       </div>
 
       <div class="hero__cards" aria-hidden="true">
-        <div class="hero__mini">
-          <strong>Wsparcie operacyjne</strong>
-          <p>Porządkuję procesy i pilnuję terminów, żebyś mógł zająć się rozwojem firmy.</p>
-        </div>
-        <div class="hero__mini">
-          <strong>Pozyskiwanie klientów</strong>
-          <p>Docieram do kontrahentów, prezentuję ofertę i domykam transakcje.</p>
-        </div>
-        <div class="hero__mini" style="grid-column:1/-1; display:flex; gap:14px; align-items:center">
-          <div style="width:44px;height:44px;border-radius:12px;background:var(--amber);display:grid;place-items:center;color:var(--navy);font-weight:700">✓</div>
-          <div>
-            <strong style="font-size:15px;margin:0">Dla firm 1–20 osób</strong>
-            <p style="margin:0">Elastycznie — płacisz za efekt, nie za etat.</p>
+        {previewServices.map((service) => (
+          <div class="hero__mini">
+            <div style="width:28px;height:28px;border-radius:8px;background:rgba(201,162,39,0.18);display:grid;place-items:center;color:var(--amber);font-size:13px;margin-bottom:10px">◈</div>
+            <strong>{service.data.title}</strong>
+            <p>{service.data.description}</p>
           </div>
-        </div>
+        ))}
       </div>
     </div>
 
-    <div class="hero__brands" aria-label="Zaufali nam">
-      <span class="hero__brands-label">Zaufali nam:</span>
+    <div class="hero__brands">
+      <span class="hero__brands-label">Zaufali nam</span>
       <div class="hero__brands-list">
-        {
-          brands.map((b) => (
-            <img
-              src={b.src.src}
-              width={b.src.width}
-              height={b.src.height}
-              alt={b.alt}
-              class="brand-logo"
-              loading="eager"
-              decoding="async"
-              style={`width:${b.w}px;height:auto`}
-            />
-          ))
-        }
+        {brands.map((brand) => (
+          <Image src={brand.logo} alt={brand.name} class="brand-logo" width={140} />
+        ))}
       </div>
     </div>
   </div>

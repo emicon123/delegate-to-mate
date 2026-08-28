@@ -1,48 +1,47 @@
 ---
-const year = new Date().getFullYear();
+import { getCollection } from 'astro:content';
+
 const base = import.meta.env.BASE_URL;
+
+// FAQ footer link only appears once real Q&A exist — mirrors Header.astro.
+const hasFaq = (await getCollection('faq')).length > 0;
 ---
 
-<footer class="site-footer" role="contentinfo">
+<footer class="site-footer" role="contentinfo" style="background:#081610;padding:36px 0 20px">
   <div class="container">
-    <div class="footer-grid">
+    <div style="display:grid;grid-template-columns:1.3fr 0.6fr 0.9fr;gap:32px;padding-bottom:24px">
       <div>
-        <div class="wordmark" style="color:white; margin-bottom:10px">delegate <span style="color:var(--amber)">to mate</span></div>
-        <p class="footer-muted">
-          Delegate To Mate — wsparcie biznesowe dla przedsiębiorców, którzy chcą odzyskać czas i&nbsp;skupić się na rozwoju swojej firmy.
-          Pomagam właścicielom JDG i&nbsp;małych zespołów delegować operacje, sprzedaż i&nbsp;projekty.
-        </p>
+        <div style="font-family:var(--font-display);font-size:15px;color:white;letter-spacing:-0.02em">delegate <span style="color:var(--amber)">to mate</span></div>
+        <p style="margin:8px 0 0;color:#7d89a8;font-size:12px;line-height:1.6;max-width:34ch">Delegate To Mate to&nbsp;firma oferująca wsparcie biznesowe dla&nbsp;przedsiębiorców, którzy chcą odzyskać czas i&nbsp;skupić się na&nbsp;rozwoju swojej firmy. Pomagam właścicielom jednoosobowych działalności i&nbsp;małych zespołów w&nbsp;delegowaniu zadań operacyjnych, sprzedażowych oraz projektowych, które na&nbsp;co&nbsp;dzień pochłaniają ich energię i&nbsp;uwagę.</p>
       </div>
-
       <div>
-        <h3 class="footer-title">Strony</h3>
-        <nav class="footer-links" aria-label="Linki w stopce">
-          <a href="#uslugi">Usługi</a>
-          <a href="#korzysci">Korzyści</a>
-          <a href="#opinie">Opinie</a>
-          <a href="#faq">FAQ</a>
-          <a href={`${base}polityka-prywatnosci/`}>Polityka prywatności</a>
+        <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#7d89a8;font-weight:700;margin-bottom:12px">STRONA</div>
+        <nav style="display:grid;gap:6px;font-size:13px">
+          <a href="#uslugi" style="color:#a8b0cc">Usługi</a>
+          <a href="#jak-to-dziala" style="color:#a8b0cc">Jak to działa</a>
+          <a href="#opinie" style="color:#a8b0cc">Opinie</a>
+          {hasFaq && <a href="#faq" style="color:#a8b0cc">FAQ</a>}
+          <a href={`${base}polityka-prywatnosci/`} style="color:#a8b0cc">Polityka prywatności</a>
         </nav>
       </div>
-
       <div>
-        <h3 class="footer-title">Kontakt</h3>
-        <div class="footer-links">
-          <a href="tel:+48796017986">Tel: (+48) 796 017 986</a>
-          <span>24/7 dostępny dla Ciebie</span>
+        <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#7d89a8;font-weight:700;margin-bottom:12px">KONTAKT</div>
+        <div style="display:grid;gap:4px;font-size:12px;color:#a8b0cc;line-height:1.6">
+          <a href="tel:+48796017986" style="color:#a8b0cc">(+48) 796 017 986</a>
+          <span>24/7 dostępny dla&nbsp;Ciebie</span>
           <span>Marii Konopnickiej 22, 43-200 Pszczyna</span>
-          <a href="mailto:kontakt@delegatetomate.pl">kontakt@delegatetomate.pl</a>
-        </div>
-        <div class="socials" style="margin-top:14px">
-          <a href="https://www.facebook.com/delegate.to.mate" aria-label="Facebook" target="_blank" rel="noopener noreferrer">f</a>
-          <a href="https://www.instagram.com/delegate_to_mate" aria-label="Instagram" target="_blank" rel="noopener noreferrer">◎</a>
+          <span>Facebook · Instagram @delegate_to_mate</span>
         </div>
       </div>
     </div>
-
-    <div class="footer-bottom">
-      <span>© {year} DELEGATE TO MATE. Wszelkie prawa zastrzeżone.</span>
-      <span style="opacity:0.7">Strona statyczna · brak WordPressa · brak bazy w&nbsp;ścieżce żądania</span>
+    <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:14px;display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:12px;font-size:11px;color:#5a6588">
+      <a href={`${base}polityka-prywatnosci/`} style="color:#5a6588">Polityka prywatności</a>
     </div>
   </div>
 </footer>
+
+<style>
+  @media (max-width: 860px) {
+    footer div[style*="grid-template-columns:1.3fr"] { grid-template-columns: 1fr !important; gap: 24px !important; }
+  }
+</style>

@@ -1,27 +1,26 @@
 ---
 import { getCollection } from 'astro:content';
+
+// Content source: docs/architecture.md — 8 real "Korzyści współpracy z
+// DELEGATE TO MATE" cards, wired via getCollection() to
+// src/content/benefits/*.md (not the mockup's 4-card "Dlaczego" set).
 const benefits = (await getCollection('benefits')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<section class="section section--navy" id="korzysci" aria-labelledby="benefits-heading">
+<section class="section section--navy" id="korzysci" aria-labelledby="benefits-heading" style="padding:72px 0">
   <div class="container">
-    <div style="max-width:780px; margin:0 auto 36px; text-align:center">
-      <span class="pill">Dlaczego Delegate To Mate</span>
-      <h2 id="benefits-heading" class="h-section h-section--navy">Korzyści współpracy z&nbsp;DELEGATE&nbsp;TO&nbsp;MATE</h2>
-      <p class="lead lead--on-navy" style="margin-inline:auto">
-        Osiem powodów, dla których przedsiębiorcy powierzają mi operacje, rekrutację i&nbsp;sprzedaż.
-      </p>
+    <div style="max-width:620px; margin:0 0 36px">
+      <span class="pill" style="background:rgba(201,162,39,0.12);border:1px solid rgba(201,162,39,0.22);color:var(--amber);font-size:10px;letter-spacing:0.12em">KORZYŚCI</span>
+      <h2 id="benefits-heading" class="h-section h-section--navy" style="margin-top:14px;line-height:0.95">Korzyści współpracy z&nbsp;DELEGATE TO MATE</h2>
     </div>
 
-    <div class="benefits-grid" role="list">
-      {
-        benefits.map((b) => (
-          <article class="benefit-card benefit-card--navy" role="listitem">
-            <h3>{b.data.title}</h3>
-            <p>{b.data.description}</p>
-          </article>
-        ))
-      }
+    <div class="benefits-grid">
+      {benefits.map((benefit) => (
+        <article class="benefit-card benefit-card--navy">
+          <h3>{benefit.data.title}</h3>
+          <p>{benefit.data.description}</p>
+        </article>
+      ))}
     </div>
   </div>
 </section>

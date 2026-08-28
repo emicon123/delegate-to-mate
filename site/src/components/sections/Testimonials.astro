@@ -1,38 +1,32 @@
 ---
 import { getCollection } from 'astro:content';
+
+// Content source: docs/architecture.md — 6 real testimonials with full
+// quotes (not the mockup's 3-card fragment version), wired via
+// getCollection() to src/content/testimonials/*.md.
 const testimonials = (await getCollection('testimonials')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<section class="section section--cream-2" id="opinie" aria-labelledby="testimonials-heading">
+<section class="section" id="opinie" aria-labelledby="testimonials-heading" style="background:#fdf8ec">
   <div class="container">
-    <div style="text-align:center; max-width:720px; margin:0 auto 36px;">
-      <span class="pill pill--outline">Opinie</span>
-      <h2 id="testimonials-heading" class="h-section">Zaufali nam — mówią klienci</h2>
-      <p class="lead" style="margin-inline:auto">Sześć głosów firm, które już skorzystały ze wsparcia. Pełne cytaty z&nbsp;aktualnej strony — bez skrótów.</p>
+    <div style="max-width:560px;margin:0 0 28px">
+      <span class="pill" style="background:transparent;border:1px solid rgba(201,162,39,0.45);color:var(--amber-dark);font-size:10px;letter-spacing:0.13em">OPINIE</span>
+      <h2 id="testimonials-heading" class="h-section" style="margin-top:14px">Co mówią klienci</h2>
     </div>
 
-    <div class="testimonials-grid" role="list">
-      {
-        testimonials.map((t) => (
-          <article class="testimonial-card" role="listitem">
-            <div class="stars" aria-hidden="true">★★★★★</div>
-            <blockquote>“{t.data.quote}”</blockquote>
-            <footer>
-              <div style="width:40px;height:40px;border-radius:50%;background:var(--navy);color:white;display:grid;place-items:center;font-weight:700;font-size:14px;flex:0 0 40px">
-                {t.data.company.charAt(0).toUpperCase()}
-              </div>
-              <cite>
-                <strong>{t.data.company}</strong>
-                <span>{t.data.author || t.data.company}</span>
-              </cite>
-            </footer>
-          </article>
-        ))
-      }
-    </div>
-
-    <div style="text-align:center; margin-top:28px">
-      <a href="#kontakt" class="btn btn--dark">Dołącz do grona klientów</a>
+    <div class="testimonials-grid">
+      {testimonials.map((testimonial) => (
+        <article class="testimonial-card">
+          <div class="stars" aria-hidden="true">★★★★★</div>
+          <blockquote>„{testimonial.data.quote}”</blockquote>
+          <footer>
+            <cite>
+              <strong>{testimonial.data.author ?? testimonial.data.company}</strong>
+              <span>{testimonial.data.company}</span>
+            </cite>
+          </footer>
+        </article>
+      ))}
     </div>
   </div>
 </section>

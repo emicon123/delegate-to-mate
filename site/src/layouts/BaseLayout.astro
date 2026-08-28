@@ -31,11 +31,24 @@ const ogImage = `${base}favicon.png`;
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#0f1e3a" />
+    <meta name="theme-color" content="#0d2b1e" />
     <link rel="icon" href={`${base}favicon.ico`} />
   </head>
   <body>
     <a class="skip-link" href="#main">Przejdź do treści</a>
     <slot />
+    <script>
+      const header = document.querySelector('.site-header');
+      const onScroll = () => header?.classList.toggle('scrolled', window.scrollY > 8);
+      addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+      const els = document.querySelectorAll('.section, .card, .service-card, .benefit-card, .testimonial-card, .faq-item');
+      els.forEach((el) => el.classList.add('reveal'));
+      const io = new IntersectionObserver(
+        (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add('in-view')),
+        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      );
+      els.forEach((el) => io.observe(el));
+    </script>
   </body>
 </html>

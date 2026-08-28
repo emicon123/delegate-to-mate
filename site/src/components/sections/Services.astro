@@ -1,48 +1,39 @@
 ---
 import { getCollection } from 'astro:content';
 
+// Content source: docs/architecture.md — 5 real services from /uslugi/,
+// wired via getCollection() to src/content/services/*.md. No pricing exists
+// on the live site — do not invent any. See architecture.md "Not found on
+// either page" for the explicit no-pricing note.
 const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
 
-const iconMap: Record<string, string> = {
-  'settings': '⚙',
-  'users': '👥',
-  'search-users': '🔍',
-  'shopping-cart': '🛒',
-  'trending-up': '📈',
+const icons: Record<string, string> = {
+  settings: '▭',
+  users: '⬢',
+  'search-users': '◈',
+  'shopping-cart': '◎',
+  'trending-up': '▲',
 };
 ---
 
-<section class="section section--cream" id="uslugi" aria-labelledby="services-heading">
+<section class="section" id="uslugi" aria-labelledby="uslugi-heading" style="background:#fdf6ec;border-top:1px solid #f3e8d0;border-bottom:1px solid #f3e8d0">
   <div class="container">
-    <div style="text-align:center; max-width:720px; margin:0 auto 36px;">
-      <span class="pill pill--outline">Usługi</span>
-      <h2 id="services-heading" class="h-section">Pięć filarów wsparcia — wybierasz to, czego potrzebujesz</h2>
-      <p class="lead" style="margin-inline:auto">
+    <div style="max-width:620px;margin:0 0 36px">
+      <h2 id="uslugi-heading" class="h-section" style="margin-top:0">Usługi</h2>
+      <p style="margin:0;color:#64748b;font-size:14.5px;line-height:1.65">
         Z&nbsp;dumą prezentuję Państwu moje projekty, które stworzyłem wykorzystując wszystkie moje umiejętności i&nbsp;profesjonalizm.
       </p>
     </div>
 
-    <div class="services-grid" role="list">
-      {
-        services.map((s) => (
-          <article class="service-card" role="listitem">
-            <div class="service-card__icon" aria-hidden="true">{iconMap[s.data.icon || ''] || '●'}</div>
-            <h3>{s.data.title}</h3>
-            <p>{s.data.description}</p>
-            {s.data.details && <p class="service-card__details">{s.data.details}</p>}
-          </article>
-        ))
-      }
-    </div>
-
-    <div style="text-align:center; margin-top:28px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap">
-      <a href="#kontakt" class="btn btn--amber">Zapytaj o zakres</a>
-      <a href="#opinie" class="btn btn--outline-dark">Zobacz opinie</a>
-    </div>
-
-    <div style="margin-top:28px; background:white; border:1px solid var(--border-cream); border-radius:var(--radius-md); padding:16px 20px; display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap; text-align:center">
-      <span style="width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block" />
-      <p style="margin:0; font-size:14px; color:var(--text-muted)"><strong style="color:var(--navy)">Brak sztywnych pakietów</strong> — każdy projekt wyceniany indywidualnie. Cennik i&nbsp;modele rozliczeń dostępne po kontakcie.</p>
+    <div class="services-grid">
+      {services.map((service) => (
+        <article class="service-card">
+          <div class="service-card__icon" aria-hidden="true">{icons[service.data.icon ?? ''] ?? '◈'}</div>
+          <h3>{service.data.title}</h3>
+          <p>{service.data.description}</p>
+          {service.data.details && <div class="service-card__details">{service.data.details}</div>}
+        </article>
+      ))}
     </div>
   </div>
 </section>

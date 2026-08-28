@@ -1,0 +1,16 @@
+name: delegate
+
+services:
+  frontend-delegate:
+    build:
+      context: ..
+      dockerfile: infra/nginx/Dockerfile
+    platform: linux/arm64
+    restart: unless-stopped
+    networks:
+      - investing-shared
+
+networks:
+  investing-shared:
+    external: true
+    name: investing-shared

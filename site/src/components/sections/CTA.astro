@@ -4,32 +4,43 @@ const phone = "(+48) 796 017 986";
 const telHref = "tel:+48796017986";
 ---
 
-<section class="section section--cream" id="kontakt" aria-labelledby="cta-heading" style="padding-bottom:0">
+<section class="section section--navy" id="kontakt" aria-labelledby="cta-heading" style="padding:64px 0 48px">
   <div class="container">
-    <div class="cta-band">
-      <div>
-        <span class="pill">Kontakt</span>
-        <h2 id="cta-heading">Gotów odzyskać czas na rozwój firmy?</h2>
-        <p>
-          Delegate To Mate to wsparcie biznesowe dla przedsiębiorców, którzy chcą odzyskać czas i&nbsp;skupić się na rozwoju.
-          Pomagam właścicielom jednoosobowych działalności i&nbsp;małych zespołów w&nbsp;delegowaniu zadań operacyjnych, sprzedażowych oraz projektowych.
-        </p>
-        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center">
-          <a href={telHref} class="btn btn--amber">Zadzwoń: {phone}</a>
-          <span class="cta-phone"><small>dostępny 24/7</small></span>
-        </div>
-        <p style="margin-top:14px; font-size:13px; color:var(--text-on-navy-muted)">
-          Marii Konopnickiej 22, 43-200 Pszczyna · <a href="mailto:kontakt@delegatetomate.pl" style="color:white; text-decoration:underline; text-underline-offset:3px">kontakt@delegatetomate.pl</a> — odpowiada Maciej
-        </p>
+    <div style="display:grid;gap:32px;align-items:start">
+      <div style="text-align:center;max-width:720px;margin:0 auto">
+        <h2 id="cta-heading" style="font-family:var(--font-display);font-size:clamp(28px,4vw,42px);line-height:0.95;letter-spacing:-0.02em;margin:0;color:white">Wybierając współpracę z&nbsp;DELEGATE TO MATE, wybierasz skuteczność, oszczędność i&nbsp;rozwój.</h2>
+        <p style="margin:12px 0 0;color:var(--text-on-navy-muted);font-size:15px;max-width:56ch;margin-inline:auto">DELEGATE TO MATE może być Twoim strategicznym partnerem, który dba o&nbsp;to, by&nbsp;Twoje cele biznesowe zostały osiągnięte szybciej i&nbsp;efektywniej.</p>
+        <a href={telHref} class="btn btn--amber" style="margin-top:20px">SKONTAKTUJ SIĘ</a>
       </div>
 
-      <div class="form-card" aria-labelledby="form-heading">
-        <h3 id="form-heading">Napisz wiadomość</h3>
-        <p>Odpowiem tego samego dnia. Pola oznaczone są walidowane w&nbsp;przeglądarce — bez przeładowań.</p>
-        <ContactForm client:load />
+      <div style="display:grid;gap:24px;align-items:start;max-width:980px;margin:0 auto;width:100%">
+        <div style="display:grid;grid-template-columns:1.05fr 0.95fr;gap:24px;align-items:start">
+          <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-xl);padding:28px;backdrop-filter:blur(12px)">
+            <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg, rgba(201,162,39,0.22), rgba(201,162,39,0.08));border:1px solid rgba(201,162,39,0.18);display:grid;place-items:center;color:var(--amber);font-size:18px;margin-bottom:14px">✦</div>
+            <h3 style="font-family:var(--font-display);font-size:20px;margin:0 0 10px;color:white;line-height:1.2">Kontakt</h3>
+            <div style="display:grid;gap:12px">
+              <a href={telHref} class="btn btn--amber" style="width:fit-content">Zadzwoń: {phone}</a>
+              <div style="font-size:13px;color:var(--text-on-navy-muted);line-height:1.6">
+                <div><span style="color:white;font-weight:600">{phone}</span> <span style="opacity:0.7">· 24/7 dostępny dla&nbsp;Ciebie</span></div>
+                <div>Marii Konopnickiej 22, 43-200 Pszczyna</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-card" aria-labelledby="form-heading" style="position:relative;overflow:hidden">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg, transparent, rgba(201,162,39,0.35), transparent)"></div>
+            <h3 id="form-heading">Napisz wiadomość</h3>
+            <p>Formularz zabezpieczony, bez przeładowań.</p>
+            <ContactForm client:load />
+          </div>
+        </div>
       </div>
     </div>
-
-    <div style="height:36px" aria-hidden="true"></div>
   </div>
 </section>
+
+<style>
+  @media (max-width: 860px) {
+    #kontakt div[style*="grid-template-columns:1.05fr 0.95fr"] { grid-template-columns: 1fr !important; }
+  }
+</style>

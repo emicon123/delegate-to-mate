@@ -1,24 +1,27 @@
 ---
-const phone = "(+48) 796 017 986";
-const telHref = "tel:+48796017986";
+import { getCollection } from 'astro:content';
+
+// FAQ nav link only appears once real Q&A exist (src/content/faq/*.md) —
+// see docs/architecture.md: the live site has no FAQ content today.
+const hasFaq = (await getCollection('faq')).length > 0;
 ---
 
 <header class="site-header" role="banner">
   <div class="container site-header__inner">
     <a href="#top" class="wordmark" aria-label="Delegate To Mate — strona główna">
       delegate <span>to mate</span>
-      <small>Wsparcie dla Twojej firmy</small>
     </a>
 
     <nav class="nav" aria-label="Główna nawigacja">
       <a href="#uslugi">Usługi</a>
-      <a href="#korzysci">Korzyści</a>
+      <a href="#jak-to-dziala">Jak to działa</a>
       <a href="#opinie">Opinie</a>
+      {hasFaq && <a href="#faq">FAQ</a>}
       <a href="#kontakt">Kontakt</a>
     </nav>
 
     <div style="display:flex;gap:10px;align-items:center">
-      <a href={telHref} class="btn btn--dark nav-cta">Umów rozmowę</a>
+      <a href="#kontakt" class="btn btn--dark nav-cta" style="padding:10px 18px;font-size:13px">SKONTAKTUJ SIĘ</a>
       <button
         class="mobile-toggle"
         type="button"
@@ -35,10 +38,11 @@ const telHref = "tel:+48796017986";
   <div class="container">
     <nav id="mobile-nav" class="mobile-panel" aria-hidden="true" aria-label="Menu mobilne">
       <a href="#uslugi">Usługi</a>
-      <a href="#korzysci">Korzyści</a>
+      <a href="#jak-to-dziala">Jak to działa</a>
       <a href="#opinie">Opinie</a>
+      {hasFaq && <a href="#faq">FAQ</a>}
       <a href="#kontakt">Kontakt</a>
-      <a href={telHref} class="btn btn--amber" style="margin-top:8px">Zadzwoń: {phone}</a>
+      <a href="#kontakt" class="btn btn--amber" style="margin-top:8px">SKONTAKTUJ SIĘ</a>
     </nav>
   </div>
 </header>
