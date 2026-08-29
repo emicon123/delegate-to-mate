@@ -40,7 +40,7 @@ Load details:
 
 ## §2 Diagram — UML-First (Architect, Required Before Delegation)
 
-Create Mermaid diagrams in authoritative doc (`docs/architecture/diagrams/<task>.md` or inline in `docs/architecture/*.md`):
+Create [Mermaid](https://mermaid.ai/open-source/intro/) diagrams in authoritative doc (`docs/architecture/diagrams/<task>.md` or inline in `docs/architecture/*.md`):
 
 - `classDiagram` — entities, DTOs, services, mappers, repos, clients, relationships + pattern annotations
 - `sequenceDiagram` / `flowchart` — request/response, multi-step flows, scheduled jobs
