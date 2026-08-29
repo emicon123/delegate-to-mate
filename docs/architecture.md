@@ -1,6 +1,8 @@
 # Architecture — delegatetomate.pl rebuild
 
 > **Status of this document (2026-08-27, Task 01 complete):** The Phase 0–5 deploy-validation spike (`.claude/tasks/done/ftp-host-validation.task.md`) passed its go/no-go review; the real content-mapping pass (Task 01, `.claude/tasks/01-content-mapping.task.md`) has also completed — live rendered HTML extracted from `https://www.delegatetomate.pl/` + `/uslugi/` (see §Real content mapping below), nine-section → component map written, CMS decision recorded (ADR-002: Decap CMS), and the final roadmap open question checked directly with the user ("No, single page only" 2026-08-27). No open questions gate the nine-section build any longer. `site/` is still the walk-skeleton source directory, now unblocked for the real Frontend build (Task `02-nine-section-build.task.md`).
+>
+> **Superseded again, 2026-08-28 (later the same day as Phase 7 below):** neither the "Real content mapping" section nor the "Content restoration" section below is current any longer. Per `docs/adr/004-shipped-copy-is-canonical.md`, the authoritative copy source is now **the shipped components themselves** (`site/src/components/sections/*.astro`, `site/src/content/**`), not any document. Both sections are kept as historical record of how the copy got to its current state; where either disagrees with the actual tree, the tree wins. See "Phase 8 — shipped copy is canonical" near the end of this document for what changed and what's still flagged/unconfirmed.
 
 ---
 
@@ -146,6 +148,236 @@ One Astro component per section, in scroll order, with the alternating dark-navy
 
 ---
 
+## Content restoration — mockup copy is the final content (Phase 7 — Task 03, 2026-08-28)
+
+> **Reverses the "Real content mapping" section above, on direct, repeated user instruction after seeing the result on the Phase 1 RPi preview.** The 2026-08-27 remediation (`fcd4079`) was correct given what was known at the time — but the user has now confirmed the mockup's own copy (headline, "Prawa Ręka"/"Concierge Auto" naming, pricing tiers, FAQ) is the desired final content, not a placeholder. This section is the new authoritative copy spec. It does not reopen the CMS, contact-form, or roadmap decisions (Decisions 1–4 above stand); it only changes which text ships in the nine sections.
+
+### Source authority, in order
+
+1. **`docs/reference/mockup-build-snapshot.html`** — a full HTML snapshot of the exact build the user confirmed on the RPi preview, saved before that container image was overwritten by a `--no-cache` rebuild and became unrecoverable via `docker images`. This is **byte-exact rendered markup**, not a re-transcription — treat every string below as pulled directly from it. **Primary source for all nine sections' copy.**
+2. **Live WP site** (`https://www.delegatetomate.pl/`, already extracted 2026-08-27, see "Real content mapping" above) — **testimonials only**. The mockup's own build flags its testimonial cards as fragments (`[Na życzenie: pełne cytaty z aktualnej strony…]`); the real full quotes were already pulled from the live site and are already committed in `site/src/content/testimonials/*.md` (6 entries). No new extraction needed — see "What does not change" below.
+3. **`Desired-UI-Look*.jpg`** — visual/layout reference only from here on (colors, spacing, card arrangement). No longer a copy source.
+4. **`dtm-architecture.html`** — secondary cross-check only, per the redirect. Not consulted for copy text in this pass since the snapshot is more reliable (exact HTML vs. a screenshot transcription).
+
+### Explicit reversal of the "no invented pricing" constraint
+
+The 2026-08-27 remediation's quality-gate note ("Frontend must not invent pricing — if tiers return, they become CMS-managed") is **deliberately reversed** here, on direct user confirmation, not an oversight. The pricing tiers below (`2400 zł`/`3300 zł`/`4000 zł`, `250 zł/h` overage, `30%`/`1000 zł`/`2500 zł`/`1%`/`2000 zł` Concierge terms) are real values already published in a previous confirmed build (the snapshot) — restoring them is not "inventing" new figures, it's reinstating figures the user has already seen and approved. A future reader should not mistake this for a quality-gate violation; see ADR-003.
+
+### Conversation-sourced edits — applied on top of the snapshot baseline
+
+Per `.claude/tasks/03-restore-mockup-content.task.md`, these five edits are **not** in the raw snapshot and must be layered on top. They're marked inline as **[EDIT #n]** in the section-by-section spec below.
+
+1. **Header CTA consolidation** — drop the plain "Kontakt" nav link, keep only the CTA button, relabel it "Kontakt" (desktop + mobile).
+2. **Pill-tag cleanup** — remove the decorative amber pill-tag badges.
+3. **Service rebrand** — "Abonament „Prawa Ręka”" → **Delegate Wsparcie**; "Concierge Auto" → **Delegate Drive**.
+4. **Four line-level copy replacements** (exact text below).
+5. **Responsive/typography CSS** — `.hero__cards` breakpoint, flex+gap icon/title/paragraph spacing, loosened line-heights.
+
+### Section-by-section final copy
+
+**1. Header/Nav** (`Header.astro`)
+
+- Wordmark: `delegate` + amber `to mate` (unchanged).
+- Nav links: Usługi (`#uslugi`), Jak to działa (`#jak-to-dziala`), Opinie (`#opinie`), FAQ (`#faq`). **[EDIT #1]** No plain "Kontakt" link — the snapshot has one (`<a href="#kontakt">Kontakt</a>` inside `.nav`); drop it.
+- CTA button (desktop + mobile): **[EDIT #1]** label "Kontakt" (snapshot has it as "Umów rozmowę" — relabel).
+- **Already correct in the working tree:** the current (uncommitted) `Header.astro` already implements both halves of Edit #1 — no plain nav "Kontakt" link, CTA already labeled "Kontakt". When Frontend swaps the rest of the page back to mockup content, **keep this exact Header.astro nav/CTA structure** — don't reintroduce the snapshot's duplicate "Kontakt" link or its "Umów rozmowę" CTA label.
+- FAQ nav link stays conditional on `hasFaq` (`getCollection('faq').length > 0`) — no logic change needed, it will resolve `true` once the FAQ collection is populated below.
+
+**2. Hero** (`Hero.astro`)
+
+- Pill "NOWA OFERTA" — **[EDIT #2]** remove.
+- H1: `Prawa Ręka do prowadzenia firmy i do zakupu auta`
+- Subhead — **[EDIT #4]** two replacements applied: `Dla właścicieli małych firm, którzy toną w sprawach bieżących i nie mają czasu na rozwój. Przejmuję operacyjny ciężar Twojej firmy i pilnuję, żebyś nie przepłacił za nowy samochód.` (snapshot has "…toną w bieżączce…" and "…za samochód firmowy." — both are replaced per Edit #4, not the snapshot's literal wording).
+- CTAs: `Umów rozmowę` (filled amber, → `#kontakt`), `Zobacz cennik` (outline, → `#uslugi`).
+- Two hero mini-cards — **[EDIT #3 + #4]** the task file names these cards by their edit-list wording ("'Delegate Wsparcie' bullet…", "'Delegate Drive' bullet…"), which is how I've resolved an otherwise-ambiguous scope question: the rebrand and the two bullet edits apply to these mini-cards, not just the full service-section headings below — flagged here for Frontend/user visibility since it's an inference, not a literal snapshot quote.
+  - Card 1: icon `◈`, bold label **Delegate Wsparcie** (snapshot: "Abonament „Prawa Ręka”"), bullet **[EDIT #4]** `Terminy, dostawcy, klienci` (snapshot: "Koordynacja zadań, terminy, dostawcy, rekrutacja").
+  - Card 2: icon `⬢`, bold label **Delegate Drive** (snapshot: "Concierge Auto"), bullet **[EDIT #4]** `Negocjuję ceny bez konfliktu interesu` (snapshot: "Negocjuję bez konfliktu interesu").
+- **CSS — already satisfied, no change needed:** current `global.css` already has `.hero__cards { grid-template-columns: 1fr 1fr }` under `@media (min-width: 640px)` (line ~356), and `.hero__mini` already uses `display:flex; flex-direction:column; gap:10px` with `strong { line-height:1.3 }` / `p { line-height:1.6 }` (lines ~359–384). This is Edit #5. Frontend should verify it still holds once the markup swaps from the current collection-driven two-card loop back to the two fixed cards above (same DOM shape, so it should carry over unchanged) — not re-derive it from scratch.
+- Logo strip ("Zaufali nam", 6 brands) — unchanged, already correct in current `Hero.astro`.
+
+**3. Dla kogo** (`Intro.astro`, section `id="jak-to-dziala"`)
+
+- Pill "DLA KOGO" — **[EDIT #2]** remove.
+- H2: `Prowadzisz firmę, nie dyspozytornię.`
+- Paragraph: `Produkcja, budowlanka i podobne branże. Codziennie gasisz pożary: terminy, dostawy, rekrutacja, oferty do sprawdzenia, i nie zostaje czasu, żeby usiąść i pomyśleć o rozwoju firmy. Nie potrzebujesz kolejnego pracownika na etacie ani asystentki „do wszystkiego”. Potrzebujesz kogoś, kto realnie przejmie operacyjny ciężar i działa dla dobra Twojej firmy, jak partner biznesowy, nie podwykonawca zadań z listy.`
+- This entirely replaces the current live-site "DELEGATE TO MATE" intro paragraph + 5-tile grid + "POZNAJ USŁUGI" button — those go, this two-column heading/paragraph layout (per the snapshot's `1fr 1.55fr` grid) replaces them.
+
+**4. Usługa 01 → Delegate Wsparcie** (`Services.astro`, section `id="uslugi"`)
+
+- Pill "USŁUGA 01" — **[EDIT #2]** remove.
+- H2: **[EDIT #3]** `Delegate Wsparcie` (snapshot: "Abonament „Prawa Ręka”").
+- Standfirst: `Wsparcie operacyjne rozliczane w jasnym, miesięcznym pakiecie godzin, bez liczenia każdej minuty i bez niespodzianek na fakturze.`
+- "Zakres bazowy" list (unchanged by Edit #4 — that edit targets the Hero mini-card bullet only, not this list; the exact string "Koordynacja zadań, terminy, dostawcy, rekrutacja" only matches the Hero card, not any line here):
+  - Koordynacja zadań i pilnowanie terminów
+  - Kontakt z klientami i dostawcami
+  - Rekrutacja
+  - Analiza ofert
+  - Negocjacje z dostawcami i podwykonawcami
+- "Moduł premium (płatny dodatkowo)" box: `Pozyskiwanie klientów, sprzedaż, analiza rynku i konkurencji, negocjacje sprzedażowe. Zakres i cena ustalane indywidualnie, po rozmowie o Twoich celach sprzedażowych.`
+- Pricing tiers: **BAZOWY** 2400 zł / 20h mies. — **STANDARD** 3300 zł / 30h mies., tagged "NAJCZĘŚCIEJ WYBIERANY" — **ROZSZERZONY** 4000 zł / 40h mies. This tier badge is a functional pricing-recommendation flag, not a decorative section-kicker pill — it is **not** in scope for the pill-tag cleanup (Edit #2).
+- Overage note: `Bezpiecznik: przekroczenie limitu godzin to dopłata 250 zł/h. Przy regularnych przekroczeniach po prostu zmieniamy pakiet na wyższy, koszt miesięczny zawsze znasz z góry.`
+
+**5. Usługa 02 → Delegate Drive** (new component or extended `Services.astro`, no `id` in snapshot — sits directly below Usługa 01, same `<section>` rhythm)
+
+- Pill "USŁUGA 02" — **[EDIT #2]** remove.
+- H2: **[EDIT #3]** `Delegate Drive` (snapshot: "Concierge Auto").
+- Standfirst: `Kupujesz samochód firmowy? Sprawdzam ofertę albo prowadzę cały proces od zera, tak żebyś nie przepłacił.`
+- Path 1 card — "MASZ JUŻ OFERTĘ": H3 `Weryfikuję i negocjuję lepsze warunki`, price line `30% od wynegocjowanego zysku brutto`, body `Zarabiam wtedy, kiedy Ty realnie oszczędzasz. Jeśli mimo negocjacji nie dojdzie do zakupu, 1000 zł rekompensaty dla Ciebie.`
+- Path 2 card — "ZACZYNASZ OD ZERA": H3 `Przejmuję cały proces zakupu`, price line `2500 zł ryczałtu`, body `albo 1% wartości konfiguracji, zależnie co wyższe, minimum 2000 zł. Dobór konfiguracji, rozeznanie rynku, negocjacje, finalizacja.`
+
+**Structural flag for Frontend — Services.astro needs a real rewrite, not a content-file swap:** the current `Services.astro` maps generically over `getCollection('services')` (5 real-site services, no pricing fields), and the `services` Zod schema (`content.config.ts`) has no tier/price fields at all. The two-service, three-tier, two-path layout above cannot be expressed as that generic collection loop — it needs bespoke markup for both service blocks (either two fixed sections, or a schema extended with a `tiers`/`paths` structure per service). This is a structural change, not just new Markdown content — flagging it explicitly since ADR-002 documented "service tiles + descriptions" as CMS-managed via the generic collection, and that assumption no longer holds for this content shape.
+
+**6. Dlaczego** (`Benefits.astro`, section `id="korzysci"`)
+
+- Pill "DLACZEGO DELEGATE TO MATE" — **[EDIT #2]** remove.
+- H2: `Partner biznesowy, który działa dla dobra Twojej firmy, nie pracownik na etacie.`
+- Four cards (replaces the current 8 real-site "Korzyści" cards — the `benefits` collection's 8 entries are all superseded):
+  1. **Ekonomika oddelegowania** — `Godzina Twojej pracy jako właściciela jest warta więcej niż stawka, którą płacisz za moją.`
+  2. **Brak konfliktu interesu** — `Przy zakupie auta zarabiam na wysokości rabatu, nie na wyborze dealera czy partnera finansowego.`
+  3. **Przewidywalny koszt** — `Bezpiecznik w abonamencie oznacza, że koszt miesięczny znasz z góry.`
+  4. **Brak ryzyka finansowego** — `Jeśli negocjacje zakupu auta się nie powiodą, 1000 zł rekompensaty. Ryzyko biorę na siebie.`
+- Each card also has an icon glyph in the snapshot (`◎`, `◈`, `▭`, `⬢` respectively) — carry these over; `Benefits.astro`'s schema (`title`, `order`, `description`) has no `icon` field today, unlike `services`, so add one or hardcode per-card icons.
+- Mechanically: replace the 8 files in `src/content/benefits/` with these 4 (delete the WP-sourced ones — `oszczednosc-czasu.md`, `kompleksowe-wsparcie.md`, `redukcja-kosztow.md`, `przewaga-konkurencyjna.md`, `transparentnosc.md`, `profesjonalizm.md`, `indywidualne-podejscie.md`, `wsparcie-finansowe.md` — rather than leaving them as orphaned/unused CMS drafts, since they no longer describe a shipped section).
+
+**7. Opinie** (`Testimonials.astro`) — **no change.**
+
+The current component already renders exactly the mockup's heading ("Co mówią klienci"), star row, blockquote/footer card shape, sourced from `getCollection('testimonials')` — and that collection already holds the 6 full, real quotes pulled from the live site 2026-08-27 (Płatkowski.net, Horizon, Bartom, Art-Bud, Gelato Nobile, Budspaw — verified against `site/src/content/testimonials/*.md`, matches this doc's "Real content mapping" section verbatim). This *is* the testimonials exception the task calls for — it was already done in the prior pass and doesn't need to be redone. Only the pill tag "OPINIE" — **[EDIT #2]** — is removed. The mockup snapshot's own 3-card version with its `[Na życzenie: pełne cytaty…]` disclaimer is superseded by this already-complete 6-quote version; do not revert to the snapshot's 3 fragments.
+
+**8. FAQ** (`FAQ.astro`)
+
+- Pill "FAQ" — **[EDIT #2]** remove.
+- H2: `Najczęściej zadawane pytania`
+- Four Q&A, first expanded by default:
+  1. **Q:** `Co jeśli nie wykorzystam wszystkich godzin z pakietu?` **A:** `Abonament to nie bank godzin do wykorzystania kiedykolwiek — to Twoja dostępna Prawa Ręka na dany miesiąc. Niewykorzystane godziny nie przechodzą na kolejny okres. Jeśli regularnie zostaje zapas, przechodzimy na mniejszy pakiet.`
+  2. **Q:** `Czyj interes reprezentujesz przy zakupie auta?` **A:** `Zawsze Twój. Przy weryfikacji oferty mam % od wypracowanej oszczędności, przy przejęciu całego procesu — ryczałt. Nie biorę prowizji od dealera ani partnera finansowego, więc nie mam powodu kierować Cię do droższego wyboru.`
+  3. **Q:** `Co jeśli przekroczę limit godzin w abonamencie, ile wtedy zapłacę?` **A:** `Przekroczenie to dopłata 250 zł/h. Jeśli widzimy, że regularnie przekraczasz limit, po prostu podnosimy pakiet — bez kar, bez niespodzianek, koszt znasz z góry przy zmianie.`
+  4. **Q:** `Czy w ogóle opłaca się oddelegować te zadania, zamiast robić je samemu?` **A:** `Jeśli Twoja godzina jako właściciela jest warta więcej niż stawka abonamentu, oddelegowanie zwalnia Ci czas na działania, które realnie budują przychód — sprzedaż, relacje, rozwój. Policz, ile godzin tygodniowo gasisz pożary, i pomnóż przez swoją stawkę — wynik zwykle odpowiada sam.`
+- Mechanically: populate `src/content/faq/*.md` with these 4 entries (schema already fits: `question`, `answer`, `order` — no schema change needed, unlike Services/Benefits above). Once populated, `FAQ.astro`'s existing `faqs.length > 0` guard resolves true automatically and the section — plus the Header/Footer FAQ nav links — appear with no component-logic change.
+- **Flagged, not silently fixed:** Q1's answer still says `…to Twoja dostępna Prawa Ręka na dany miesiąc` — the old service name, un-updated for the Edit #3 rebrand to "Delegate Wsparcie". This is in the snapshot verbatim; Edit #3 in the task file only names the two H2 headings and (per the Hero-card inference above) the two mini-card labels — it doesn't mention FAQ prose. Leaving it as "Prawa Ręka" here would read as a naming inconsistency against the rebranded section immediately above it. Not fixing this without a decision — flagging for the user/Frontend to say whether Q1's answer should also say "Delegate Wsparcie".
+
+**9. CTA+Footer** (`CTA.astro` + `Footer.astro`)
+
+- CTA heading: `Koniec z gaszeniem pożarów.`
+- CTA subtext: `Napisz, pogadajmy o tym, co można oddać z Twojego biurka.`
+- Left panel: icon `✦`, H3 `Porozmawiajmy o Twojej firmie`, body `Delegate To Mate — wsparcie operacyjne i concierge zakupowy dla właścicieli małych firm. Odzyskaj czas na rozwój.`
+- Phone CTA button: `Zadzwoń: (+48) 796 017 986` (unchanged `tel:` href).
+- Phone line: `(+48) 796 017 986 · dostępny 24/7` (current `CTA.astro` has "24/7 dostępny dla Ciebie" — snapshot has "dostępny 24/7"; use the snapshot's word order since it's the primary source for this pass).
+- Address: `Marii Konopnickiej 22, 43-200 Pszczyna` (unchanged).
+- Email line (new vs. current `CTA.astro`, which has no email): `kontakt@delegatetomate.pl — odpowiada Maciej`, `mailto:` link.
+- Form card: H3 `Napisz wiadomość`, standfirst `Odpowiem tego samego dnia. Formularz zabezpieczony, bez przeładowań.` (current `CTA.astro` has only "Formularz zabezpieczony, bez przeładowań." — snapshot adds the "Odpowiem tego samego dnia." lead-in; use the snapshot's fuller version).
+- Form fields, honeypot, submit label, privacy-policy link text — unchanged, already match current `ContactForm.tsx` exactly (not touched by the WP remediation pass, no diff to apply).
+- Footer tagline: `Wsparcie operacyjne i concierge zakupowy dla właścicieli małych firm.` (replaces the current, longer WP-sourced "Delegate To Mate to firma oferująca…" paragraph).
+- Footer "STRONA" nav: Usługi, Jak to działa, Opinie, FAQ (unchanged — footer never had a "Kontakt" entry, so Edit #1's consolidation doesn't touch it).
+- Footer "KONTAKT" block: phone, address, `Facebook · Instagram @delegate_to_mate` (unchanged from current).
+- Copyright bar: `© 2026 Delegate to Mate. Wszelkie prawa zastrzeżone.` + `Polityka prywatności` link (current footer's copyright bar has only the policy link, no copyright line at all — add it).
+
+### SEO/meta — flagged, not a literal snapshot restore
+
+`site/src/pages/index.astro`'s `title`/`description` (and the `<title>`/`<meta description>` the snapshot's own `<head>` carries) are **still the old WP-sourced SEO copy** ("DELEGATE TO MATE — Innowacyjne rozwiązania dla Twojego biznesu…") — this didn't get updated when the mockup body content was built, so the snapshot itself is internally inconsistent (mockup body, stale head). There is no "final" head-tag text to copy verbatim from any source. Proposed resolution, assembled entirely from copy already restored above (not invented prose): title `delegate to mate — Prawa Ręka do prowadzenia firmy i do zakupu auta` (wordmark + the restored H1), description = the restored Hero subhead verbatim (`Dla właścicieli małych firm, którzy toną w sprawach bieżących…żebyś nie przepłacił za nowy samochód.`, ~200 chars, truncates gracefully). JSON-LD `Organization`/`WebSite` blocks (phone, address, `sameAs`) are unaffected either way and don't need to change.
+
+### What does not change (already correct in the working tree — don't redo)
+
+- `Header.astro`'s nav/CTA structure (Edit #1) — already implemented, uncommitted.
+- `.hero__cards`/`.hero__mini` responsive CSS in `global.css` (Edit #5) — already implemented, uncommitted.
+- `Testimonials.astro` and its 6-entry content collection — already the real, full quotes; no re-pull needed.
+- `ContactForm.tsx` — form fields/labels already match the snapshot exactly.
+- ADR-001 (contact form → hosted API), ADR-002 (Decap CMS), the single-page roadmap call — none of these are reopened by this copy reversal.
+
+### Done when (Frontend)
+
+- All nine sections above render this spec's copy, with the five edits applied and the two flagged open items (FAQ Q1's "Prawa Ręka" reference, SEO meta text) either resolved per the proposal above or explicitly deferred back to the user.
+- `services` and `benefits` Zod schemas and content files are restructured per the notes above (Services needs bespoke tier markup; Benefits collection is a straight 8→4 swap).
+- `npm run build` clean; RPi Phase 1 container rebuilt and redeployed per the task file's own done-when list.
+
+---
+
+## Phase 8 — shipped copy is canonical (2026-08-28, later the same day as Phase 7)
+
+> Full reasoning: `docs/adr/004-shipped-copy-is-canonical.md`. This section is a short pointer, not a re-transcription of the nine sections — the source of truth for actual copy is the components themselves from this point on, not this document.
+
+After Phase 7 landed in the working tree, further edits happened directly against the components — some described to Architect and confirmed as intentional, some found only by spot-checking the tree against the Phase 7 spec while writing this section. The user then confirmed directly: the page content as it currently stands is the desired content, and documentation should catch up to it, not the other way around.
+
+**Confirmed-final (user-described or directly made, not bugs):**
+
+- **Hero** — "Zaufali nam" 6-brand logo strip removed entirely (markup + `.hero__brands*`/`.brand-logo*` CSS). A Hero sub-element, not a top-level section — content parity across the nine sections is unaffected.
+- **CTA** — heading "Koniec z gaszeniem pożarów." → "Koniec z ciągłym przeciążeniem."; subhead "…co można oddać z Twojego biurka" → "…co można zdjąć z Twojego biurka"; phone/contact block lost "· dostępny 24/7", the street address, and "— odpowiada Maciej" (now just phone + email).
+- **Footer** — tagline paragraph under the wordmark removed; street address removed from the KONTAKT column (phone + Facebook/Instagram remain).
+- The `LocalBusiness`/`Organization` JSON-LD in `site/src/pages/index.astro` still carries the street address, untouched — an **open question**, not a decision: should it also drop now that the address is gone from visible page content, or does structured data legitimately keep it regardless of what's rendered?
+
+**Flagged, not confirmed** — found via spot-check against the Phase 7 spec, not described as deliberate edits, and materially change a commercial term or figure in three of five cases:
+
+| Where | Phase 7 spec said | Tree currently ships | Materiality |
+|---|---|---|---|
+| `Services.astro` overage note + `faq/przekroczenie-limitu.md` | `250 zł/h` | `200 zł/h` (consistent across both files) | Pricing figure |
+| `Services.astro` Delegate Drive, "Masz już ofertę" | Company pays client 1000 zł if negotiation fails and no purchase results | Client pays company 1000 zł if they cancel the purchase after work starts — reversed direction | Commercial term, high |
+| `Services.astro` Delegate Drive, "Zaczynasz od zera" | "…minimum 2000 zł" floor on the 1% figure | Floor clause absent | Pricing term |
+| `benefits/brak-ryzyka-finansowego.md` | "Jeśli negocjacje zakupu auta się nie powiodą, 1000 zł rekompensaty. Ryzyko biorę na siebie." | "Jeśli nie dostarczę większej korzyści, nadal nic nie tracisz." (title also extended to "…przy zakupie pojazdu") | Reworded to match the reversed compensation framing above |
+| `Services.astro` "Zakres bazowy", 3rd bullet | "Rekrutacja" | "Wsparcie rekrutacji" | Cosmetic |
+| `benefits/ekonomika-oddelegowania.md` | Title "Ekonomika oddelegowania" | Title "Ekonomia delegowania" | Cosmetic rename |
+| `Intro.astro` | "Codziennie gasisz pożary: terminy, dostawy, rekrutacja…" | "Jesteś zmuszony do załatwiania mnóstwa spraw: terminy, dostawy, rekrutacja, komunikacja, klienci…" — no "gasisz pożary" line at all | Matches neither Phase 7 nor any alternative the user was shown mid-session per the orchestrator; no final wording picked |
+
+The 1000 zł-clause reversal and its matching Benefits-card reword are internally consistent with each other, which reads more like an intentional (if undocumented) business-model change than an accident — but "internally consistent" isn't the same as "confirmed," so it stays flagged rather than written up as decided. Same for the 200 zł/h rate, consistent across two files. None of these were edited as part of this reconciliation pass; a future pass either confirms them with the user and syncs this document, or corrects the component/content files back toward the Phase 7 figures — both are content decisions outside this pass's docs-only scope.
+
+Separately, `.claude/tasks/03-restore-mockup-content.task.md`'s own Edit #4 (line-level copy edits) is only 3-of-4 correctly applied — the "Delegate Wsparcie" Hero mini-card bullet ships as `"Koordynacja zadań, terminy, dostawcy, klienci"`, matching neither the pre-edit snapshot text nor the edit's specified target `"Terminy, dostawcy, klienci"`. That task file stays open (not moved to `done/`) pending a Frontend fix.
+
+## Tenth section — "O mnie" (About me) — Task 04, 2026-08-28
+
+> **New scope, beyond the original nine-section WP migration.** This is not a content-parity item traced back to the live WP site or the mockup — it's a personal "about the founder" section the user requested directly on 2026-08-28, with a design proposal shown as an Artifact mockup and explicitly approved ("Propozycja jest dobra. Zakoduj."). Full approved spec: `.claude/tasks/04-add-o-mnie-section.task.md`. This entry records that spec in the same place Frontend looks for every other section's content contract; it does not reopen or alter Decisions 1–4 or ADRs 001–004.
+
+**What it is:** a photo-plus-copy section introducing Maciek Boryś as the person behind the service — a signature/credibility beat between the value-proposition argument (Dlaczego) and the social-proof section (Opinie).
+
+**Where it sits:** `src/components/sections/OMnie.astro`, rendered in `site/src/pages/index.astro` between `<Benefits />` (Dlaczego) and `<Testimonials />` (Opinie) — i.e. the page's section order becomes Header → Hero → Intro → Services → Benefits → **OMnie** → Testimonials → FAQ → CTA → Footer.
+
+**Why here, and why cream:** comes right after the value-prop argument and right before client-proof testimonials — the natural point to introduce the person behind the promise, before the reader hears from other clients. It also fixes section rhythm: Benefits (Dlaczego) is `.section--navy`, so a cream section here avoids two navy sections back to back. Background: the existing `.section--cream-2` gradient token (`linear-gradient(180deg, var(--cream-2) 0%, var(--cream) 100%)`) — no new color token needed.
+
+**Status of the content below (updated 2026-08-29):** all four pieces are now final. The bio paragraphs and photo were placeholders when this section was first specced (2026-08-28); the user has since sent the real photo (`site/src/assets/o-mnie/maciek-borys.png`) and five real bio sentences, both now wired into `OMnie.astro`. The "Content contract for Frontend" subsection below is left as originally written — it documents the approved placeholder-era spec (layout, kicker, signature element, CTA are all still accurate and unchanged; the bio-paragraph and photo text within it are superseded by the shipped component, same treatment this doc gives other historical specs elsewhere).
+
+| Element | Status |
+|---|---|
+| Name "Maciek Boryś" | **Final.** Confirmed directly by the user. |
+| Role "Założyciel delegate to mate" | **Final.** Confirmed directly by the user (male form — "Założyciel", not "Założycielka"). |
+| Bio paragraphs (now five, not two) | **Final.** Real copy sent by the user 2026-08-29 — see `OMnie.astro` for the shipped text. No more `.fill`/bracket placeholder styling. |
+| Photo | **Final.** Real photo supplied 2026-08-29 — `site/src/assets/o-mnie/maciek-borys.png` (427×640, background-removed cutout), wired via `astro:assets` `<Image>`. |
+
+### Content contract for Frontend
+
+**Layout:** two-column grid, photo left / copy right on desktop, `grid-template-columns: 0.85fr 1.15fr`, gap ~60px — same breakpoint convention as `.intro__grid`/`.hero__grid` (`@media (min-width: 900px)`; stacked, photo above copy, below that width).
+
+**Kicker:** small-caps, amber, **no pill background** — the site removed pill-tag badges sitewide 2026-08-28 (ADR-003's Edit #2); don't reintroduce one here.
+> "Poznaj swoją prawą rękę"
+
+**Heading:** `.h-section`-equivalent, `font-family: var(--font-display)`, weight 400.
+> "Cześć, jestem Maciek."
+
+**Bio paragraphs (DRAFT — pending real copy from the user):** `.lead`-style (`color: #475569`, `font-size: 15.5px`, `line-height: 1.75`, `max-width: 56ch`). Bracketed spans (`[X lat]`, `[branża / tło zawodowe]`) get a `.fill` class (`border-bottom: 1.5px dotted var(--amber-dark); color: var(--amber-dark); font-weight: 600`) so the placeholder nature is visually obvious rather than reading as finished copy:
+1. "Nie jestem platformą ani call center — jestem jedną osobą, z którą rozmawiasz od pierwszego telefonu do ostatniego załatwionego tematu. **[X lat]** spędziłem w **[branża / tło zawodowe]**, zanim doszedłem do wniosku, że najwięcej wnoszę tam, gdzie mogę zdjąć z kogoś operacyjny ciężar prowadzenia firmy."
+2. "Traktuję Twoją firmę jak swoją — bez podwykonawców, bez „to nie mój dział”. Jeśli się na coś umawiamy, biorę za to odpowiedzialność osobiście."
+
+**Signature element (final copy, the section's one distinctive touch):** below a `border-top: 1px solid var(--border-cream)` divider — name set in italic Fraunces amber, reusing the exact `.hero h1 em` treatment already in `global.css` (`color: var(--amber); font-style: italic; font-weight: 400;`), at ~28–32px:
+> "Maciek Boryś"
+
+Below it, smaller muted text:
+> "Założyciel delegate to mate"
+
+**CTA:** a text link (not a `.btn`) styled like the nav's underline-on-hover pattern — amber `border-bottom`, gap widens on hover.
+> "Umów rozmowę →" → `#kontakt`
+
+**Photo spec (placeholder-pending-real-photo):**
+- Portrait aspect ratio 4:5, `border-radius: var(--radius-xl)`, `box-shadow: var(--shadow-card)`.
+- Offset amber-bordered frame behind/around it (`border: 2px solid var(--amber)`, offset ~18px down-right, `opacity: ~0.55`) — reads as a framed photograph.
+- Placeholder fill (no real photo exists yet): the site's navy/amber gradient (`radial-gradient(...rgba(201,162,39,0.35)...), linear-gradient(155deg, #17412e, #0d2b1e, #0a2217)`) with a minimal two-shape flat SVG bust/silhouette (cream fill, low opacity — not a detailed illustration), plus a small caption strip at the bottom: "Miejsce na zdjęcie · portret, proporcje 4:5".
+- Build this so the swap is trivial later: land the real file under `site/src/assets/o-mnie/` when it arrives, and leave a code comment in `OMnie.astro` pointing at exactly which placeholder block becomes an Astro `<Image>` (`astro:assets`) once that file exists. Don't wire up an `astro:assets` import for a file that doesn't exist yet — that would fail the build.
+
+**Accessibility/motion:** responsive down to mobile (stacked below 900px), keyboard-focusable CTA with a visible focus state, `prefers-reduced-motion` respected if any transition is added — same bar as the other nine sections.
+
+**Follow-up expected:** the user will send the real photo and finished bio text in a later message. When that happens, the photo swap and the two `.fill`-marked paragraphs are the only things that should need to change — no other markup. `.claude/tasks/04-add-o-mnie-section.task.md` carries a note to this effect and moves to `.claude/tasks/done/` with that caveat once Frontend ships the placeholder version.
+
+### ADR? — not warranted
+
+No ADR was written for this addition. The ADR guidance in this repo (see the Architect role definition) reserves ADRs for decisions with a real trade-off to weigh — CMS vs. no CMS, form destination, stack choice. This is not that: placement, layout, photo treatment, and copy were already designed, shown to the user as a mockup, and approved outright, with no competing option Architect had to weigh or that a future reader would need reasoning to understand. It's an approved content/design addition, not an architectural decision — recording it here, in the same place every other section's content contract lives, is the right level of documentation.
+
+---
+
 ## Not decided here — none remaining
 
-All `CLAUDE.md` open questions that gate the nine-section build are now resolved: copy source (live site, not mockup), CMS (Decap, ADR-002), contact-form destination (hosted API, ADR-001), roadmap (single page only, checked 2026-08-27). The build is unblocked.
+All `CLAUDE.md` open questions that gate the nine-section build are now resolved: copy source (**superseded twice, 2026-08-28** — first to the mockup snapshot, see "Content restoration" above; then to the shipped components themselves, see "Phase 8" above and ADR-004), CMS (Decap, ADR-002), contact-form destination (hosted API, ADR-001), roadmap (single page only, checked 2026-08-27). The build is unblocked; ADR-003 and ADR-004 record the two copy-source reversals. A handful of content items surfaced in Phase 8 (pricing figures, a possibly-reversed compensation clause, Intro's paragraph) remain genuinely open and need the user's confirmation — they don't gate the build, since the build already ships whatever is in the tree, but they do gate calling those specific figures "correct."

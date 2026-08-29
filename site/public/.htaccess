@@ -1,0 +1,68 @@
+# .htaccess — delegatetomate.pl static build (Astro)
+#
+# Replaces the old WordPress .htaccess. This file lives at site/public/.htaccess
+# and Astro copies it verbatim into site/dist/ on every `npm run build:root`, so
+# it ships with the build output automatically instead of being a manual FTP
+# add-on. There is no PHP, no WordPress, and no rewrite-to-index.php logic here
+# — this is a 100% static, multi-page site (LiteSpeed serves files directly).
+#
+# Sections: canonical trailing-slash URLs, long-lived cache headers on
+# content-hashed assets, short/no-cache on HTML so new deploys are picked up
+# immediately, and 404 handling.
+
+# ------------------------------------------------------------------------
+# Canonical URLs (trailing slash)
+# ------------------------------------------------------------------------
+# Astro's default build format is "directory" (confirmed against the actual
+# build output: polityka-prywatnosci/index.html, not polityka-prywatnosci.html)
+# — so the canonical URL for that page is /polityka-prywatnosci/ with the
+# trailing slash, and that's the form to redirect TO, not away from.
+#
+# This mirrors mod_dir's DirectorySlash behavior but does it explicitly via
+# mod_rewrite, since shared-hosting LiteSpeed configs don't reliably have
+# DirectorySlash on. Only fires when the requested path maps to a real
+# on-disk directory and is missing its trailing slash — normal file requests
+# (assets, favicons, index.html itself) are untouched.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{REQUEST_URI} !/$
+  RewriteRule ^(.*)$ /$1/ [L,R=301]
+</IfModule>
+
+# ------------------------------------------------------------------------
+# Cache headers
+# ------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # Content-hashed build assets: _astro/*.js, *.css, *.webp (Astro's asset
+  # pipeline — filename changes whenever content does, so caching forever
+  # is safe). If a future build starts emitting other hashed types under
+  # _astro/ (fonts, etc.), extend this pattern to match.
+  <FilesMatch "\.(js|css|webp)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # HTML pages and the Decap CMS config are NOT content-hashed — keep them
+  # revalidated on every request so a fresh deploy is visible immediately
+  # rather than stuck behind a stale cached copy.
+  <FilesMatch "\.(html|ya?ml)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+
+  # Root-level favicons aren't hashed either, but change rarely — a short
+  # cache is a reasonable middle ground between "forever" and "never".
+  <FilesMatch "^favicon.*\.(ico|png)$">
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+</IfModule>
+
+# ------------------------------------------------------------------------
+# 404 handling
+# ------------------------------------------------------------------------
+# No custom 404 page exists yet in the build (no src/pages/404.astro in the
+# Astro source, so dist/ has no 404.html for this to point at). Falls
+# through to LiteSpeed's built-in default error page for now — correct
+# status code, just unbranded. Once a branded 404 page is added (Astro
+# auto-emits dist/404.html from src/pages/404.astro), uncomment this line:
+# ErrorDocument 404 /404.html

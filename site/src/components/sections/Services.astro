@@ -1,39 +1,148 @@
 ---
-import { getCollection } from 'astro:content';
+// Content source: docs/reference/mockup-build-snapshot.html — restored
+// 2026-08-28, see docs/adr/003-mockup-copy-restoration.md and
+// docs/architecture.md "Content restoration" (§4-5, Usługa 01 → Delegate
+// Wsparcie / Usługa 02 → Delegate Drive).
+//
+// This replaces the prior generic getCollection('services') card grid (5
+// real-site services, no pricing). The restored content is exactly two
+// fixed, differently-shaped offers — a 3-tier pricing table with a bullet
+// scope + premium upsell, and a 2-path pricing-card layout — that don't fit
+// a repeatable N-item collection loop, so it's hardcoded here rather than
+// forced into a CMS schema (see content.config.ts). The repeating
+// sub-structures within each block (tiers, paths) are still mapped from
+// small local arrays.
+//
+// Both "USŁUGA 01"/"USŁUGA 02" pill tags are removed per [EDIT #2]
+// (pill-tag cleanup). The section titles are rebranded per [EDIT #3]:
+// "Abonament „Prawa Ręka”" → Delegate Wsparcie, "Concierge Auto" → Delegate
+// Drive. The "NAJCZĘŚCIEJ WYBIERANY" tier badge is a functional
+// pricing-recommendation flag, not a decorative kicker — it stays.
 
-// Content source: docs/architecture.md — 5 real services from /uslugi/,
-// wired via getCollection() to src/content/services/*.md. No pricing exists
-// on the live site — do not invent any. See architecture.md "Not found on
-// either page" for the explicit no-pricing note.
-const services = (await getCollection('services')).sort((a, b) => a.data.order - b.data.order);
+const tiers = [
+  { name: 'Bazowy', price: '2400 zł', hours: '20h / mies.' },
+  { name: 'Standard', price: '3300 zł', hours: '30h / mies.', highlighted: true, badge: 'Najczęściej wybierany' },
+  { name: 'Rozszerzony', price: '4000 zł', hours: '40h / mies.' },
+];
 
-const icons: Record<string, string> = {
-  settings: '▭',
-  users: '⬢',
-  'search-users': '◈',
-  'shopping-cart': '◎',
-  'trending-up': '▲',
-};
+const scopeItems = [
+  'Koordynacja zadań i pilnowanie terminów',
+  'Kontakt z klientami i dostawcami',
+  'Wsparcie rekrutacji',
+  'Analiza ofert',
+  'Negocjacje z dostawcami i podwykonawcami',
+];
+
+const paths = [
+  {
+    icon: '◈',
+    kicker: 'Masz już ofertę',
+    title: 'Weryfikuję i negocjuję lepsze warunki',
+    price: '30%',
+    priceNote: 'od wynegocjowanego zysku brutto',
+    before: 'Opłaca mi się zaoszczędzić jak najwięcej Twoich pieniędzy. Jeśli podejmiemy działania, ale z jakiegokolwiek powodu zrezygnujesz z zakupu, zapłacisz ',
+    bold: '1000 zł ',
+    after: ' rekompensaty.',
+  },
+  {
+    icon: '◎',
+    kicker: 'Zaczynasz od zera',
+    title: 'Przejmuję cały proces zakupu',
+    price: '2500 zł',
+    priceNote: 'ryczałtu',
+    before: 'albo ',
+    bold: '1% ',
+    after: 'wartości konfiguracji, zależnie co wyższe. Dobór marki, modelu, konfiguracji. Rozeznanie rynku, negocjacje, znalezienie korzystnego finansowania, finalizacja zakupu.',
+  },
+];
 ---
 
-<section class="section" id="uslugi" aria-labelledby="uslugi-heading" style="background:#fdf6ec;border-top:1px solid #f3e8d0;border-bottom:1px solid #f3e8d0">
+<section class="section" id="uslugi" aria-labelledby="usluga1-heading" style="background:#fdf6ec;border-top:1px solid #f3e8d0;border-bottom:1px solid #f3e8d0">
   <div class="container">
-    <div style="max-width:620px;margin:0 0 36px">
-      <h2 id="uslugi-heading" class="h-section" style="margin-top:0">Usługi</h2>
+    <div class="usluga1-grid" style="display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:start">
+      <div>
+        <h2 id="usluga1-heading" class="h-section" style="margin-top:0">Delegate Wsparcie</h2>
+        <p style="margin:0 0 26px;color:#64748b;font-size:14.5px;line-height:1.65;max-width:44ch">
+          Wsparcie operacyjne rozliczane w&nbsp;jasnym, miesięcznym pakiecie godzin, bez liczenia każdej minuty i&nbsp;bez niespodzianek na&nbsp;fakturze.
+        </p>
+
+        <div style="margin-bottom:18px">
+          <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;color:var(--navy);margin-bottom:10px">Zakres bazowy</div>
+          <ul style="margin:0;padding:0;list-style:none;display:grid;gap:7px;color:#334155;font-size:14px;line-height:1.5">
+            {scopeItems.map((item) => (
+              <li style="display:flex;gap:8px"><span style="color:var(--amber-dark)">•</span> {item}</li>
+            ))}
+          </ul>
+        </div>
+
+        <div style="background:white;border:1px solid var(--border-cream);border-left:3px solid var(--amber);border-radius:12px;padding:16px 18px">
+          <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px">Moduł premium (płatny dodatkowo)</div>
+          <p style="margin:0;color:#64748b;font-size:12.5px;line-height:1.65">
+            Pozyskiwanie klientów, sprzedaż, analiza rynku i&nbsp;konkurencji, negocjacje sprzedażowe. Zakres i&nbsp;cena ustalane indywidualnie, po&nbsp;rozmowie o&nbsp;Twoich celach sprzedażowych.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <div class="tiers-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:end">
+          {tiers.map((tier) => (
+            <div style={`background:white;border:1px solid ${tier.highlighted ? 'var(--amber)' : 'var(--border-cream)'};border-radius:14px;padding:16px 12px;text-align:center;position:relative;${tier.highlighted ? 'box-shadow:0 6px 20px rgba(201,162,39,0.18)' : ''}`}>
+              {tier.badge && (
+                <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--amber);color:var(--navy);font-size:8px;letter-spacing:0.08em;text-transform:uppercase;font-weight:800;padding:4px 8px;border-radius:999px;white-space:nowrap">{tier.badge}</div>
+              )}
+              <div style={`font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:#94a3b8;font-weight:700;margin-bottom:8px;${tier.badge ? 'margin-top:6px' : ''}`}>{tier.name}</div>
+              <div style="font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--navy);line-height:1">{tier.price}</div>
+              <div style="font-size:11px;color:#94a3b8;margin-top:4px">{tier.hours}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style="margin-top:14px;background:#fdf6ec;border:1px solid var(--border-cream);border-radius:10px;padding:12px 14px;display:flex;gap:10px;align-items:start">
+          <span style="flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:var(--amber);margin-top:6px;display:inline-block"></span>
+          <p style="margin:0;color:#64748b;font-size:11.5px;line-height:1.6">
+            <strong style="color:var(--navy)">Bezpiecznik:</strong> przekroczenie limitu godzin to dopłata <strong style="color:var(--navy)">200 zł/h</strong>. Przy regularnych przekroczeniach po&nbsp;prostu zmieniamy pakiet na&nbsp;wyższy, koszt miesięczny zawsze znasz z&nbsp;góry.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="usluga2-heading" style="background:#fefbf1;padding-top:56px;padding-bottom:56px">
+  <div class="container">
+    <div style="max-width:560px;margin:0 0 28px">
+      <h2 id="usluga2-heading" class="h-section" style="margin-top:0">Delegate Drive</h2>
       <p style="margin:0;color:#64748b;font-size:14.5px;line-height:1.65">
-        Z&nbsp;dumą prezentuję Państwu moje projekty, które stworzyłem wykorzystując wszystkie moje umiejętności i&nbsp;profesjonalizm.
+        Kupujesz nowy samochód lub motocykl? Sprawdzam ofertę albo prowadzę cały proces od&nbsp;zera, tak żebyś nie przepłacił.
       </p>
     </div>
 
-    <div class="services-grid">
-      {services.map((service) => (
-        <article class="service-card">
-          <div class="service-card__icon" aria-hidden="true">{icons[service.data.icon ?? ''] ?? '◈'}</div>
-          <h3>{service.data.title}</h3>
-          <p>{service.data.description}</p>
-          {service.data.details && <div class="service-card__details">{service.data.details}</div>}
-        </article>
+    <div class="paths-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+      {paths.map((path) => (
+        <div style="background:white;border:1px solid var(--border-cream);border-radius:16px;padding:24px;box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:10px">
+          <div style="width:36px;height:36px;border-radius:10px;background:rgba(201,162,39,0.14);display:grid;place-items:center;color:var(--amber-dark);font-size:14px;flex-shrink:0">{path.icon}</div>
+          <div style="font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:#94a3b8;font-weight:700">{path.kicker}</div>
+          <h3 style="font-family:var(--font-display);font-size:17px;margin:0;color:var(--navy);line-height:1.35">{path.title}</h3>
+          <div style="font-family:var(--font-display);font-size:18px;color:var(--amber-dark);font-weight:700">
+            {path.price} <span style="font-family:var(--font-sans);font-size:12px;font-weight:500;color:#64748b">{path.priceNote}</span>
+          </div>
+          <p style="margin:0;color:#64748b;font-size:12.5px;line-height:1.65">
+            {path.before}<strong style="color:var(--navy)">{path.bold}</strong>{path.after}
+          </p>
+        </div>
       ))}
     </div>
   </div>
 </section>
+
+<style>
+  @media (max-width: 860px) {
+    .usluga1-grid { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 560px) {
+    .tiers-grid { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 640px) {
+    .paths-grid { grid-template-columns: 1fr !important; }
+  }
+</style>

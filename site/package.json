@@ -8,6 +8,7 @@
     "build": "astro build --outDir dist",
     "build:root": "astro build --outDir dist",
     "build:test-static": "cross-env PUBLIC_BASE_PATH=/_test-static/ astro build --outDir dist-test-static",
+    "build:delegate": "cross-env PUBLIC_BASE_PATH=/delegate/ astro build --outDir dist-delegate",
     "preview": "astro preview",
     "astro": "astro",
     "check": "astro check"

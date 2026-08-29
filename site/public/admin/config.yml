@@ -7,27 +7,21 @@ media_folder: "site/src/assets/uploads"
 public_folder: "/src/assets/uploads"
 
 collections:
-  - name: "services"
-    label: "Usługi"
-    folder: "site/src/content/services"
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: "Tytuł", name: "title", widget: "string" }
-      - { label: "Kolejność", name: "order", widget: "number", value_type: "int" }
-      - { label: "Ikona", name: "icon", widget: "string", required: false }
-      - { label: "Opis krótki", name: "description", widget: "text" }
-      - { label: "Szczegóły", name: "details", widget: "text", required: false }
-      - { label: "Treść", name: "body", widget: "markdown", required: false }
+  # NOTE: the "services" collection was removed 2026-08-28 (mockup-copy
+  # restoration, docs/adr/003-mockup-copy-restoration.md). The two real
+  # offers (Delegate Wsparcie / Delegate Drive) are now fixed, differently
+  # -shaped pricing blocks hardcoded in site/src/components/sections/
+  # Services.astro, not a CMS-managed collection — see the comment there.
 
   - name: "benefits"
-    label: "Korzyści"
+    label: "Korzyści (Dlaczego)"
     folder: "site/src/content/benefits"
     create: true
     slug: "{{slug}}"
     fields:
       - { label: "Tytuł", name: "title", widget: "string" }
       - { label: "Kolejność", name: "order", widget: "number", value_type: "int" }
+      - { label: "Ikona (znak, np. ◎ ◈ ▭ ⬢)", name: "icon", widget: "string", required: false }
       - { label: "Opis", name: "description", widget: "text" }
       - { label: "Treść", name: "body", widget: "markdown", required: false }
 

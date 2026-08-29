@@ -1,11 +1,18 @@
 ---
 import { getCollection } from 'astro:content';
 
-// Content source: docs/architecture.md — the live site has zero FAQ content
-// (no accordion, no jet-tabs, no "?"-terminated questions in the DOM). This
-// collection is CMS-managed and currently empty on purpose; the section
-// renders nothing at all until real Q&A are authored via Decap or git at
-// src/content/faq/*.md. Do not ship the mockup's placeholder Q&A.
+// Content source: docs/reference/mockup-build-snapshot.html — restored
+// 2026-08-28, see docs/adr/003-mockup-copy-restoration.md and
+// docs/architecture.md "Content restoration" (§8, FAQ). The live site had
+// zero FAQ content, so this collection was intentionally empty until now;
+// it's populated with the mockup's 4 real (non-placeholder) Q&A below. The
+// `faqs.length > 0` guard is unchanged — it now just resolves true. The
+// "FAQ" pill is removed per [EDIT #2].
+//
+// Flagged, not silently fixed: Q1's answer ("niewykorzystane-godziny.md")
+// still refers to "Prawa Ręka" un-rebranded against the Delegate Wsparcie
+// naming used in Services.astro — see docs/architecture.md's note on this;
+// left as-is pending a user decision.
 const faqs = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.order);
 ---
 
@@ -13,8 +20,7 @@ const faqs = (await getCollection('faq')).sort((a, b) => a.data.order - b.data.o
   <section class="section" id="faq" aria-labelledby="faq-heading" style="background:#fefbf1">
     <div class="container">
       <div style="max-width:560px;margin:0 0 28px">
-        <span class="pill" style="background:transparent;border:1px solid rgba(201,162,39,0.45);color:var(--amber-dark);font-size:10px;letter-spacing:0.13em">FAQ</span>
-        <h2 id="faq-heading" class="h-section" style="margin-top:14px">Najczęściej zadawane pytania</h2>
+        <h2 id="faq-heading" class="h-section" style="margin-top:0">Najczęściej zadawane pytania</h2>
       </div>
 
       <div class="faq-list" role="list" style="max-width:780px;margin:0">

@@ -5,14 +5,23 @@ import Hero from '../components/sections/Hero.astro';
 import Intro from '../components/sections/Intro.astro';
 import Services from '../components/sections/Services.astro';
 import Benefits from '../components/sections/Benefits.astro';
+import OMnie from '../components/sections/OMnie.astro';
 import Testimonials from '../components/sections/Testimonials.astro';
 import FAQ from '../components/sections/FAQ.astro';
 import CTA from '../components/sections/CTA.astro';
 import Footer from '../components/sections/Footer.astro';
 
-const title = 'DELEGATE TO MATE — Innowacyjne rozwiązania dla Twojego biznesu';
+// Title/description updated 2026-08-28 alongside the mockup-copy
+// restoration (docs/adr/003-mockup-copy-restoration.md) — the prior text
+// was stale WP-era SEO copy that no longer matched the restored body
+// content. No "final" head-tag text exists in any source, so this is
+// assembled entirely from copy already restored elsewhere on the page
+// (wordmark + Hero H1 for the title, the Hero subhead verbatim for the
+// description) rather than invented — see docs/architecture.md's
+// "SEO/meta" note for the full reasoning.
+const title = 'delegate to mate — Prawa Ręka do prowadzenia firmy i do zakupu auta';
 const description =
-  'DELEGATE TO MATE to wszechstronne wsparcie dla firm — wsparcie operacyjne, koordynacja zespołu, rekrutacja, pośrednictwo zakupowe i pozyskiwanie klientów. Odzyskaj czas na rozwój.';
+  'Dla właścicieli małych firm, którzy toną w sprawach bieżących i nie mają czasu na rozwój. Przejmuję operacyjny ciężar Twojej firmy i pilnuję, żebyś nie przepłacił za nowy samochód.';
 const canonical = 'https://www.delegatetomate.pl/';
 ---
 
@@ -23,6 +32,7 @@ const canonical = 'https://www.delegatetomate.pl/';
     <Intro />
     <Services />
     <Benefits />
+    <OMnie />
     <Testimonials />
     <FAQ />
     <CTA />

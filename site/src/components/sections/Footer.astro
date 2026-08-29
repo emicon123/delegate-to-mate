@@ -5,14 +5,17 @@ const base = import.meta.env.BASE_URL;
 
 // FAQ footer link only appears once real Q&A exist — mirrors Header.astro.
 const hasFaq = (await getCollection('faq')).length > 0;
+
+// Content source: docs/reference/mockup-build-snapshot.html — restored
+// 2026-08-28, see docs/adr/003-mockup-copy-restoration.md and
+// docs/architecture.md "Content restoration" (§9, CTA+Footer).
 ---
 
 <footer class="site-footer" role="contentinfo" style="background:#081610;padding:36px 0 20px">
   <div class="container">
-    <div style="display:grid;grid-template-columns:1.3fr 0.6fr 0.9fr;gap:32px;padding-bottom:24px">
+    <div class="footer-cols" style="display:grid;grid-template-columns:1.3fr 0.6fr 0.9fr;gap:32px;padding-bottom:24px">
       <div>
         <div style="font-family:var(--font-display);font-size:15px;color:white;letter-spacing:-0.02em">delegate <span style="color:var(--amber)">to mate</span></div>
-        <p style="margin:8px 0 0;color:#7d89a8;font-size:12px;line-height:1.6;max-width:34ch">Delegate To Mate to&nbsp;firma oferująca wsparcie biznesowe dla&nbsp;przedsiębiorców, którzy chcą odzyskać czas i&nbsp;skupić się na&nbsp;rozwoju swojej firmy. Pomagam właścicielom jednoosobowych działalności i&nbsp;małych zespołów w&nbsp;delegowaniu zadań operacyjnych, sprzedażowych oraz projektowych, które na&nbsp;co&nbsp;dzień pochłaniają ich energię i&nbsp;uwagę.</p>
       </div>
       <div>
         <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#7d89a8;font-weight:700;margin-bottom:12px">STRONA</div>
@@ -21,20 +24,18 @@ const hasFaq = (await getCollection('faq')).length > 0;
           <a href="#jak-to-dziala" style="color:#a8b0cc">Jak to działa</a>
           <a href="#opinie" style="color:#a8b0cc">Opinie</a>
           {hasFaq && <a href="#faq" style="color:#a8b0cc">FAQ</a>}
-          <a href={`${base}polityka-prywatnosci/`} style="color:#a8b0cc">Polityka prywatności</a>
         </nav>
       </div>
       <div>
         <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#7d89a8;font-weight:700;margin-bottom:12px">KONTAKT</div>
         <div style="display:grid;gap:4px;font-size:12px;color:#a8b0cc;line-height:1.6">
           <a href="tel:+48796017986" style="color:#a8b0cc">(+48) 796 017 986</a>
-          <span>24/7 dostępny dla&nbsp;Ciebie</span>
-          <span>Marii Konopnickiej 22, 43-200 Pszczyna</span>
           <span>Facebook · Instagram @delegate_to_mate</span>
         </div>
       </div>
     </div>
-    <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:14px;display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:12px;font-size:11px;color:#5a6588">
+    <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:11px;color:#5a6588">
+      <span>© 2026 Delegate to Mate. Wszelkie prawa zastrzeżone.</span>
       <a href={`${base}polityka-prywatnosci/`} style="color:#5a6588">Polityka prywatności</a>
     </div>
   </div>
@@ -42,6 +43,6 @@ const hasFaq = (await getCollection('faq')).length > 0;
 
 <style>
   @media (max-width: 860px) {
-    footer div[style*="grid-template-columns:1.3fr"] { grid-template-columns: 1fr !important; gap: 24px !important; }
+    .footer-cols { grid-template-columns: 1fr !important; gap: 24px !important; }
   }
 </style>
