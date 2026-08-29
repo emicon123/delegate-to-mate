@@ -94,7 +94,7 @@ The main Claude Code session is the orchestrator. It reads this file, then spawn
 
 ## Open questions (settle before scoping the build — see `dtm-architecture.html` §05)
 
-- ~~Does anyone non-technical need to edit copy/pricing later?~~ — **RESOLVED: yes — Decap CMS.** Git-based, no backend, content edits become commits via a static `/admin` SPA; publishing stays `rebuild + FTP`. Alternatives (Contentful, Sanity, Tina, Strapi) evaluated and rejected for this project's `cost-free + static-first + FTP-only + no persistent process` constraints. Full reasoning: `docs/adr/002-headless-cms.md` and `docs/architecture.md` (Decision 4).
+- ~~Does anyone non-technical need to edit copy/pricing later?~~ — **RESOLVED: yes.** First resolution (2026-08-27): Decap CMS — see `docs/adr/002-headless-cms.md`. **Superseded 2026-08-29** (`docs/adr/005-content-editing-without-cms.md`): Decap's `/admin` was built but never actually reachable (its `github` backend needs Netlify's OAuth proxy by default, and this project deliberately isn't on Netlify) — removed entirely rather than fixed. Replaced with a local AI coding agent (OpenCode/Claude Code) working directly in this repo, guided by the new root-level `Maciek.md`, publishing via the auto-deploy GitHub Actions workflow described above. No OAuth, no new accounts, and — unlike Decap's fixed form fields — covers layout/design changes too, not just copy.
 - ~~Contact form destination~~ — **RESOLVED.** Hosted form API (Web3Forms or Formspree), not PHP `mail()` on this host. Decided after a live Phase 4 test (`.claude/tasks/done/ftp-host-validation.task.md`) showed `mail()` working mechanically but landing in spam. Full reasoning: `docs/architecture.md` (Decision 3) and `docs/adr/001-contact-form-destination.md`.
 - ~~Is the copy shown in `Desired-UI-Look*.jpg` final content or placeholder?~~ — **RESOLVED 2026-08-28, then superseded later the same day.** First resolution: the mockup's own copy — headline, section names, pricing tiers, FAQ — ships, not the live-WordPress-extracted copy from `docs/architecture.md` §Real content mapping (see `.claude/tasks/03-restore-mockup-content.task.md`). **Superseded 2026-08-28 (later same day):** the source of truth moved again, to the shipped components themselves — see the "Visual & content reference" section above and `docs/adr/004-shipped-copy-is-canonical.md`. A handful of divergences this uncovered (Services.astro pricing/wording, Intro's paragraph) are flagged there as still needing user confirmation, not yet resolved.
 - ~~Anything beyond this one page on the roadmap (blog, multi-language, gated content)?~~ — **RESOLVED: no.** Checked directly with the user 2026-08-27 — no concrete near-term plan beyond this single landing page (standalone `/polityka-prywatnosci/` is the only other retained page). Static-first Astro + Decap stands; Next.js trigger remains per `dtm-architecture.html` §04–§05.
@@ -118,8 +118,9 @@ Add new tasks by dropping a `<name>.task.md` file into `.claude/tasks/`.
 
 ## Git
 
-- Repository has no commits yet — the current working tree is the initial FTP snapshot of `public_html`, pulled down for reference and migration. First commit is still pending.
+- Remote: `https://github.com/emicon123/delegate-to-mate` (`main` branch). History was rewritten with `git filter-repo` on 2026-08-29 to strip the old `public_html/` WordPress snapshot (it carried plaintext DB credentials) before this repo was ever pushed — `public_html/` is now git-ignored entirely and no longer kept on disk.
 - Use **Conventional Commits** (`feat:`, `fix:`, `chore:`, etc.).
+- `.github/workflows/deploy.yml` auto-builds and FTP-deploys to seohost.pl on every push to `main` (see "Content/design editing without a developer" below) — a denylist check runs first and refuses to deploy if the push touched `.github/` or anything `.env`-named.
 
 ## Project structure (current + target)
 
@@ -140,7 +141,11 @@ Once the rebuild is scoped, WordPress core/theme/plugin files under `public_html
 
 ## Deploying
 
-**Phase 1 — RPi (current, testing only):**
+**Status (2026-08-29): production cutover is complete.** delegatetomate.pl is live on seohost.pl, served entirely from the static build — WordPress core/theme/plugins, `backup.php`/`db_dump.php`/`zip.php`, and `_test-static/` are all deleted from the live server (verified 404). The Phase 1 RPi/Tailscale setup below is **decommissioned** — its container, image, and the `location /delegate/` block in investing-app's `nginx.conf` have been removed; it was scaffolding for pre-cutover testing, not a permanent target. Both phase descriptions are kept below as historical record of how the migration was actually done.
+
+**Ongoing deploys now go through GitHub Actions, not manual FTP** — see "Content/design editing without a developer" above and `.github/workflows/deploy.yml`: push to `main` → auto build → auto FTP to `public_html`, gated by a denylist check on `.github/`/`.env*`. Manual FTP (per Phase 2 below) is still the right tool for larger structural changes outside that workflow's scope (dependency/build-config changes, anything the denylist would correctly refuse to auto-deploy) — use `.env`'s credentials directly, following Phase 2's steps.
+
+**Phase 1 — RPi (historical, testing only — decommissioned):**
 1. Build locally in the site source dir → static output, built with the `/delegate` base path.
 2. Ship the build into a container (following the `frontend-leszek`/`frontend-magda` pattern in investing-app's `infra/compose.yml`) joined to the external `investing-shared` network.
 3. Add/confirm the `location /delegate/` proxy block in investing-app's shared `nginx.conf` — a change in that repo, not this one.

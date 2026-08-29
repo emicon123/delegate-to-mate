@@ -1,0 +1,75 @@
+name: Deploy to seohost.pl
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  guardrail:
+    name: Check deploy-pipeline files untouched
+    runs-on: ubuntu-latest
+    outputs:
+      safe: ${{ steps.check.outputs.safe }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Diff changed files against the denylist
+        id: check
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then
+            BEFORE=$(git rev-list --max-parents=0 HEAD)
+          fi
+          CHANGED=$(git diff --name-only "$BEFORE" "${{ github.sha }}")
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          DENY_PATTERN='^(\.github/|\.env(\..*)?$|site/\.env(\..*)?$)'
+          BLOCKED=$(echo "$CHANGED" | grep -E "$DENY_PATTERN" || true)
+
+          if [ -n "$BLOCKED" ]; then
+            echo "::error::Push touches deploy-pipeline files, refusing to auto-deploy:"
+            echo "$BLOCKED"
+            echo "safe=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          echo "safe=true" >> "$GITHUB_OUTPUT"
+
+  build-and-deploy:
+    name: Build and FTP-deploy
+    needs: guardrail
+    if: needs.guardrail.outputs.safe == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Install dependencies
+        working-directory: site
+        run: npm ci
+
+      - name: Build (production, root base path)
+        working-directory: site
+        env:
+          PUBLIC_WEB3FORMS_ACCESS_KEY: ${{ secrets.PUBLIC_WEB3FORMS_ACCESS_KEY }}
+        run: npm run build:root
+
+      - name: Deploy over FTPS
+        run: |
+          sudo apt-get update -y && sudo apt-get install -y lftp
+          lftp -c "
+          set ssl:verify-certificate no
+          set net:timeout 30
+          set net:max-retries 3
+          open -u \"${{ secrets.FTP_LOGIN }},${{ secrets.FTP_PASSWORD }}\" -p \"${{ secrets.FTP_PORT }}\" \"${{ secrets.FTP_SERVER }}\"
+          mirror -R --delete --verbose=1 site/dist public_html
+          bye
+          "
