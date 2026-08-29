@@ -10,7 +10,7 @@ Instalujemy **OpenCode Desktop** (aplikacja z oknem, jak każdy inny program na 
 - Zainstaluj jak zwykłą aplikację (otwórz pobrany plik, przenieś do Aplikacji, uruchom).
 - **Dodaj projekt** — otwórz/wskaż folder z kodem strony (`~/delegate-to-mate` — jeśli go jeszcze nie ma, patrz niżej, agent go pobierze przy pierwszym uruchomieniu).
 - **Utwórz nową sesję** w tym projekcie (skrót `Ctrl+N`, albo przycisk "New session" w oknie). Sesje same się zapisują — jeśli Maciek zamknie aplikację w połowie pracy, po ponownym otwarciu wszystko wraca dokładnie tam, gdzie było.
-- **Wybierz darmowy model** — przy pierwszym uruchomieniu aplikacja poprosi o wybór modelu. Wybierz cokolwiek oznaczone "Free" w OpenCode Zen (np. **MiMo Free**, **DeepSeek Free**, **Muse** — obie są dobre do tego typu pracy).
+- **Wybierz darmowy model** — przy pierwszym uruchomieniu aplikacja poprosi o wybór modelu. Wybierz cokolwiek oznaczone "Free" w OpenCode Zen (np. **MiMo Free**, **DeepSeek Free**, **Muse** — wszystkie są dobre do tego typu pracy).
 - W polu do pisania napisz `@Maciek.md` i wybierz ten plik z podpowiedzi (albo po prostu napisz: *"Przeczytaj Maciek.md z repo emicon123/delegate-to-mate i skonfiguruj resztę"*, jeśli repo jeszcze nie jest otwarte jako projekt).
 - Od tego momentu wszystko poniżej robi agent **wewnątrz aplikacji** — Maciek nie musi sam otwierać żadnego Terminala, chyba że poniższa instrukcja wyraźnie o to poprosi (jeden konkretny wyjątek niżej).
 
