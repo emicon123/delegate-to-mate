@@ -1,15 +1,13 @@
 # Secrets / credentials
 .env
 .env.*
-public_html/wp-config.php
 
-# Legacy backup/dump scripts — hardcoded DB creds, unauthenticated, must not exist on the live site either
-public_html/backup.php
-public_html/db_dump.php
-public_html/zip.php
+# Stale local WordPress snapshot — production is fully migrated off it and
+# the live server's copy is deleted; purged from git history (filter-repo,
+# 2026-08-29) since it carried plaintext DB credentials. Never re-add.
+public_html/
 
 # Site/DB backups — large binaries, contain full DB dumps
-public_html/wp-content/ai1wm-backups/
 *.wpress
 *.sql
 db_backup_*.sql
