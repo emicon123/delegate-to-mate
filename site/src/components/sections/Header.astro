@@ -1,9 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
 
-// FAQ nav link only appears once real Q&A exist (src/content/faq/*.md) —
-// see docs/architecture.md: the live site has no FAQ content today.
 const hasFaq = (await getCollection('faq')).length > 0;
+const site = (await getCollection('site'))[0]?.data;
 ---
 
 <header class="site-header" role="banner">
@@ -13,10 +12,9 @@ const hasFaq = (await getCollection('faq')).length > 0;
     </a>
 
     <nav class="nav" aria-label="Główna nawigacja">
-      <a href="#uslugi">Usługi</a>
-      <a href="#jak-to-dziala">Jak to działa</a>
-      <a href="#o-mnie">O mnie</a>
-      <a href="#opinie">Opinie</a>
+      {site.nav.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
       {hasFaq && <a href="#faq">FAQ</a>}
     </nav>
 
@@ -37,10 +35,9 @@ const hasFaq = (await getCollection('faq')).length > 0;
 
   <div class="container">
     <nav id="mobile-nav" class="mobile-panel" aria-hidden="true" aria-label="Menu mobilne">
-      <a href="#uslugi">Usługi</a>
-      <a href="#jak-to-dziala">Jak to działa</a>
-      <a href="#o-mnie">O mnie</a>
-      <a href="#opinie">Opinie</a>
+      {site.nav.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
       {hasFaq && <a href="#faq">FAQ</a>}
       <a href="#kontakt" class="btn btn--amber" style="margin-top:8px">Kontakt</a>
     </nav>

@@ -1,44 +1,38 @@
 ---
+import { getCollection } from 'astro:content';
 import ContactForm from '../ContactForm';
-const phone = "(+48) 796 017 986";
-const telHref = "tel:+48796017986";
-const email = "kontakt@delegatetomate.pl";
 
-// Content source: docs/reference/mockup-build-snapshot.html — restored
-// 2026-08-28, see docs/adr/003-mockup-copy-restoration.md and
-// docs/architecture.md "Content restoration" (§9, CTA+Footer). The
-// standalone extra "SKONTAKTUJ SIĘ" button that the prior (WP-extracted)
-// version had under the heading is dropped — the mockup doesn't have it,
-// and the phone-CTA button in the left panel already covers that action.
+const cta = (await getCollection('cta'))[0]?.data;
+const site = (await getCollection('site'))[0]?.data;
 ---
 
 <section class="section section--navy" id="kontakt" aria-labelledby="cta-heading" style="padding:64px 0 48px">
   <div class="container">
     <div style="display:grid;gap:32px;align-items:start">
       <div style="text-align:center;max-width:720px;margin:0 auto">
-        <h2 id="cta-heading" style="font-family:var(--font-display);font-size:clamp(28px,4vw,42px);line-height:1.1;letter-spacing:-0.01em;margin:0;color:white">Koniec z ciągłym przeciążeniem.</h2>
-        <p style="margin:12px 0 0;color:var(--text-on-navy-muted);font-size:15px;max-width:56ch;margin-inline:auto">Napisz, pogadajmy o tym, co można zdjąć z Twojego biurka.</p>
+        <h2 id="cta-heading" style="font-family:var(--font-display);font-size:clamp(28px,4vw,42px);line-height:1.1;letter-spacing:-0.01em;margin:0;color:white">{cta.heading}</h2>
+        <p style="margin:12px 0 0;color:var(--text-on-navy-muted);font-size:15px;max-width:56ch;margin-inline:auto">{cta.sub}</p>
       </div>
 
       <div style="display:grid;gap:24px;align-items:start;max-width:980px;margin:0 auto;width:100%">
         <div class="cta-grid" style="display:grid;grid-template-columns:1.05fr 0.95fr;gap:24px;align-items:start">
           <div style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius-xl);padding:28px;backdrop-filter:blur(12px)">
-            <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg, rgba(201,162,39,0.22), rgba(201,162,39,0.08));border:1px solid rgba(201,162,39,0.18);display:grid;place-items:center;color:var(--amber);font-size:18px;margin-bottom:14px">✦</div>
-            <h3 style="font-family:var(--font-display);font-size:22px;margin:0 0 10px;color:white;line-height:1.15">Porozmawiajmy o Twojej firmie</h3>
-            <p style="margin:0 0 18px;color:var(--text-on-navy-muted);font-size:14.5px;line-height:1.65">Delegate To Mate — wsparcie operacyjne i concierge zakupowy dla właścicieli małych firm. Odzyskaj czas na rozwój.</p>
+            <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg, rgba(201,162,39,0.22), rgba(201,162,39,0.08));border:1px solid rgba(201,162,39,0.18);display:grid;place-items:center;color:var(--amber);font-size:18px;margin-bottom:14px">{cta.panelIcon}</div>
+            <h3 style="font-family:var(--font-display);font-size:22px;margin:0 0 10px;color:white;line-height:1.15">{cta.panelTitle}</h3>
+            <p style="margin:0 0 18px;color:var(--text-on-navy-muted);font-size:14.5px;line-height:1.65">{cta.panelBody}</p>
             <div style="display:grid;gap:12px">
-              <a href={telHref} class="btn btn--amber" style="width:fit-content">Zadzwoń: {phone}</a>
+              <a href={site.phoneHref} class="btn btn--amber" style="width:fit-content">Zadzwoń: {site.phone}</a>
               <div style="font-size:13px;color:var(--text-on-navy-muted);line-height:1.6">
-                <div><span style="color:white;font-weight:600">{phone}</span></div>
-                <div><a href={`mailto:${email}`} style="color:white;text-decoration:underline;text-underline-offset:3px">{email}</a></div>
+                <div><span style="color:white;font-weight:600">{site.phone}</span></div>
+                <div><a href={`mailto:${site.email}`} style="color:white;text-decoration:underline;text-underline-offset:3px">{site.email}</a></div>
               </div>
             </div>
           </div>
 
           <div class="form-card" aria-labelledby="form-heading" style="position:relative;overflow:hidden">
             <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg, transparent, rgba(201,162,39,0.35), transparent)"></div>
-            <h3 id="form-heading">Napisz wiadomość</h3>
-            <p>Odpowiem tego samego dnia. Formularz zabezpieczony, bez przeładowań.</p>
+            <h3 id="form-heading">{cta.formTitle}</h3>
+            <p>{cta.formStandfirst}</p>
             <ContactForm client:load />
           </div>
         </div>

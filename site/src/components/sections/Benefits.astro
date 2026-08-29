@@ -1,19 +1,14 @@
 ---
 import { getCollection } from 'astro:content';
 
-// Content source: docs/reference/mockup-build-snapshot.html — restored
-// 2026-08-28, see docs/adr/003-mockup-copy-restoration.md and
-// docs/architecture.md "Content restoration" (§6, Dlaczego). Replaces the
-// prior 8 real-site "Korzyści współpracy" cards with the mockup's 4
-// value-prop cards, wired via getCollection() to src/content/benefits/*.md.
-// The "DLACZEGO DELEGATE TO MATE" pill is removed per [EDIT #2].
 const benefits = (await getCollection('benefits')).sort((a, b) => a.data.order - b.data.order);
+const site = (await getCollection('site'))[0]?.data;
 ---
 
 <section class="section section--navy" id="korzysci" aria-labelledby="benefits-heading" style="padding:72px 0">
   <div class="container">
     <div style="max-width:620px; margin:0 0 36px">
-      <h2 id="benefits-heading" class="h-section h-section--navy" style="margin-top:0">Partner biznesowy, który działa dla dobra Twojej firmy, nie pracownik na etacie.</h2>
+      <h2 id="benefits-heading" class="h-section h-section--navy" style="margin-top:0">{site.benefitsHeading}</h2>
     </div>
 
     <div class="benefits-grid">

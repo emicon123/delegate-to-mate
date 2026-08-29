@@ -382,6 +382,17 @@ a { color: inherit; text-decoration: none; }
 .hero__mini:hover::before { opacity: 1; }
 .hero__mini strong { font-family: var(--font-display); font-size: 18px; line-height: 1.3; display: block; }
 .hero__mini p { margin: 0; font-size: 13px; color: var(--text-on-navy-muted); line-height: 1.6; }
+.hero__mini-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(201,162,39,0.18);
+  display: grid;
+  place-items: center;
+  color: var(--amber);
+  font-size: 13px;
+  flex-shrink: 0;
+}
 .intro__grid {
   display: grid;
   gap: 18px;

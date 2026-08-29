@@ -10,25 +10,22 @@ import Testimonials from '../components/sections/Testimonials.astro';
 import FAQ from '../components/sections/FAQ.astro';
 import CTA from '../components/sections/CTA.astro';
 import Footer from '../components/sections/Footer.astro';
+import { getSingleton } from '../lib/collections';
+import type { Hero as HeroData } from '../lib/collections';
 
-// Title/description updated 2026-08-28 alongside the mockup-copy
-// restoration (docs/adr/003-mockup-copy-restoration.md) — the prior text
-// was stale WP-era SEO copy that no longer matched the restored body
-// content. No "final" head-tag text exists in any source, so this is
-// assembled entirely from copy already restored elsewhere on the page
-// (wordmark + Hero H1 for the title, the Hero subhead verbatim for the
-// description) rather than invented — see docs/architecture.md's
-// "SEO/meta" note for the full reasoning.
-const title = 'delegate to mate — Prawa Ręka do prowadzenia firmy i do zakupu auta';
-const description =
-  'Dla właścicieli małych firm, którzy toną w sprawach bieżących i nie mają czasu na rozwój. Przejmuję operacyjny ciężar Twojej firmy i pilnuję, żebyś nie przepłacił za nowy samochód.';
-const canonical = 'https://www.delegatetomate.pl/';
+const [site, hero] = await Promise.all([
+  getSingleton<any>('site'),
+  getSingleton<HeroData>('hero'),
+]);
+const title = site.title;
+const description = site.description;
+const canonical = site.canonical;
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical}>
   <Header />
   <main id="main">
-    <Hero />
+    <Hero hero={hero} />
     <Intro />
     <Services />
     <Benefits />
@@ -44,15 +41,15 @@ const canonical = 'https://www.delegatetomate.pl/';
     "@type": "Organization",
     name: "DELEGATE TO MATE",
     url: canonical,
-    telephone: "+48 796 017 986",
+    telephone: site.phone,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "Marii Konopnickiej 22",
-      postalCode: "43-200",
-      addressLocality: "Pszczyna",
-      addressCountry: "PL"
+      streetAddress: site.addressStreet,
+      postalCode: site.addressPostal,
+      addressLocality: site.addressCity,
+      addressCountry: site.addressCountry
     },
-    sameAs: ["https://www.facebook.com/delegate.to.mate", "https://www.instagram.com/delegate_to_mate"]
+    sameAs: [site.facebook, site.instagram]
   })} />
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",

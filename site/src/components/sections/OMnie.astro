@@ -1,23 +1,9 @@
 ---
 import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
 import maciekPhoto from '../../assets/o-mnie/maciek-borys.png';
 
-// Tenth section — "O mnie" (About me). Approved 2026-08-28, beyond the
-// original nine-section WP migration scope — see docs/architecture.md
-// ("Tenth section — 'O mnie'") and
-// .claude/tasks/04-add-o-mnie-section.task.md for the original approved
-// content contract (placement, layout, photo treatment, signature element —
-// all shown to the user as a mockup and approved verbatim, not
-// re-litigated here).
-//
-// Name "Maciek Boryś" and role "Założyciel delegate to mate" are FINAL,
-// confirmed directly by the user. The photo (site/src/assets/o-mnie/
-// maciek-borys.png, 427x640, background-removed RGBA cutout) and the five
-// bio paragraphs below are also now FINAL, real, user-supplied content sent
-// 2026-08-29 — this replaces the original code-level placeholder graphic
-// and the two draft `.fill`-bracketed paragraphs. See docs/architecture.md
-// ("Tenth section" status table, updated 2026-08-29) for the status
-// history.
+const omnie = (await getCollection('omnie'))[0]?.data;
 ---
 
 <section class="section section--cream-2" id="o-mnie" aria-labelledby="omnie-heading">
@@ -28,7 +14,7 @@ import maciekPhoto from '../../assets/o-mnie/maciek-borys.png';
         <div class="omnie__photo">
           <Image
             src={maciekPhoto}
-            alt="Maciek Boryś, założyciel delegate to mate"
+            alt={omnie.photoAlt}
             width={427}
             height={640}
             densities={[1, 2]}
@@ -39,31 +25,19 @@ import maciekPhoto from '../../assets/o-mnie/maciek-borys.png';
       </div>
 
       <div>
-        <p class="omnie__kicker">Poznaj swoją prawą rękę</p>
-        <h2 id="omnie-heading" class="h-section" style="margin-top:0">Cześć, jestem Maciek.</h2>
+        <p class="omnie__kicker">{omnie.kicker}</p>
+        <h2 id="omnie-heading" class="h-section" style="margin-top:0">{omnie.heading}</h2>
 
-        <p class="omnie__bio">
-          Ciągły kontakt z&nbsp;przedsiębiorcami podczas kilku lat mojego doświadczenia w&nbsp;sprzedaży i&nbsp;project managemencie uświadomił mnie o&nbsp;przeciążeniu ich całodziennymi sprawami.
-        </p>
-        <p class="omnie__bio">
-          Nazywam się Maciek Boryś i,&nbsp;łącząc wątki oraz doświadczenia, stworzyłem Delegate To Mate — miejsce, które pomaga odzyskać czas przeznaczony na&nbsp;rozwój.
-        </p>
-        <p class="omnie__bio">
-          Wielu ludzi sądzi, że nie da się kupić czasu, ja jednak uważam, że się da.
-        </p>
-        <p class="omnie__bio">
-          Delegate To Mate powstało po&nbsp;to, żeby zdejmować z&nbsp;przedsiębiorców i&nbsp;zapracowanych osób zadania, które zajmują czas, zaprzątają głowę i&nbsp;odciągają uwagę od&nbsp;rzeczy naprawdę istotnych. Od&nbsp;researchu i&nbsp;organizacji, przez kontakt z&nbsp;usługodawcami i&nbsp;koordynowanie spraw, aż po&nbsp;dopilnowanie, żeby temat został faktycznie zamknięty.
-        </p>
-        <p class="omnie__bio">
-          Ty decydujesz, na co przeznaczyć odzyskany czas. Ja pomagam Ci go odzyskać.
-        </p>
+        {omnie.bio.map((paragraph) => (
+          <p class="omnie__bio">{paragraph}</p>
+        ))}
 
         <div class="omnie__signature">
-          <p class="omnie__signature-name">Maciek Boryś</p>
-          <p class="omnie__signature-role">Założyciel delegate to mate</p>
+          <p class="omnie__signature-name">{omnie.signatureName}</p>
+          <p class="omnie__signature-role">{omnie.signatureRole}</p>
         </div>
 
-        <a href="#kontakt" class="omnie__cta">Umów rozmowę <span aria-hidden="true">→</span></a>
+        <a href={omnie.ctaHref} class="omnie__cta">{omnie.ctaLabel} <span aria-hidden="true">→</span></a>
       </div>
     </div>
   </div>

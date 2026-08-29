@@ -1,0 +1,21 @@
+---
+title: "Delegate Drive"
+standfirst: "Kupujesz nowy samochód lub motocykl? Sprawdzam ofertę albo prowadzę cały proces od zera, tak żebyś nie przepłacił."
+paths:
+  - icon: "◈"
+    kicker: "Masz już ofertę"
+    title: "Weryfikuję i negocjuję lepsze warunki"
+    price: "30%"
+    priceNote: "od wynegocjowanego zysku brutto"
+    before: "Opłaca mi się zaoszczędzić jak najwięcej Twoich pieniędzy. Jeśli podejmiemy działania, ale z jakiegokolwiek powodu zrezygnujesz z zakupu, zapłacisz "
+    bold: "1000 zł "
+    after: "rekompensaty."
+  - icon: "◎"
+    kicker: "Zaczynasz od zera"
+    title: "Przejmuję cały proces zakupu"
+    price: "2500 zł"
+    priceNote: "ryczałtu"
+    before: "albo "
+    bold: "1% "
+    after: "wartości konfiguracji, zależnie co wyższe. Dobór marki, modelu, konfiguracji. Rozeznanie rynku, negocjacje, znalezienie korzystnego finansowania, finalizacja zakupu."
+---

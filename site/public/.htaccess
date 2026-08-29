@@ -6,9 +6,20 @@
 # add-on. There is no PHP, no WordPress, and no rewrite-to-index.php logic here
 # — this is a 100% static, multi-page site (LiteSpeed serves files directly).
 #
-# Sections: canonical trailing-slash URLs, long-lived cache headers on
-# content-hashed assets, short/no-cache on HTML so new deploys are picked up
-# immediately, and 404 handling.
+# Sections: directory-index priority, canonical trailing-slash URLs,
+# long-lived cache headers on content-hashed assets, short/no-cache on HTML
+# so new deploys are picked up immediately, and 404 handling.
+
+# ------------------------------------------------------------------------
+# Directory index priority
+# ------------------------------------------------------------------------
+# During the WordPress-to-static cutover, index.php sits alongside our
+# index.html in the same directory (WP core files are removed in a later,
+# separate step). This host's default DirectoryIndex order serves index.php
+# first when both exist, which would silently keep serving the old WordPress
+# site even with this .htaccess in place. Force index.html first so the
+# static build actually takes effect the moment it's uploaded.
+DirectoryIndex index.html index.php
 
 # ------------------------------------------------------------------------
 # Canonical URLs (trailing slash)

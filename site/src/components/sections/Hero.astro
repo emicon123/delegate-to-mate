@@ -1,48 +1,31 @@
 ---
-// Content source: docs/reference/mockup-build-snapshot.html — restored
-// 2026-08-28 as the authoritative copy source, see
-// docs/adr/003-mockup-copy-restoration.md and docs/architecture.md
-// "Content restoration". The two hero mini-cards preview the two rebranded
-// service blocks (Usługa 01 "Delegate Wsparcie" / Usługa 02 "Delegate
-// Drive" — see Services.astro) so they're hardcoded here rather than
-// pulled from a collection: there are exactly two fixed offers, not an
-// open-ended list a CMS editor would add to.
-const heroServices = [
-  {
-    icon: '◈',
-    title: 'Delegate Wsparcie',
-    summary: 'Koordynacja zadań, terminy, dostawcy, rekrutacja',
-  },
-  {
-    icon: '⬢',
-    title: 'Delegate Drive',
-    summary: 'Negocjuję ceny bez konfliktu interesu',
-  },
-];
+import type { Hero } from '../../lib/collections';
+
+interface Props {
+  hero: Hero;
+}
+
+const { hero } = Astro.props as Props;
 ---
 
 <section class="hero" id="top" aria-labelledby="hero-heading">
   <div class="container">
     <div class="hero__grid">
       <div>
-        <h1 id="hero-heading">
-          Prawa Ręka do prowadzenia firmy i&nbsp;do zakupu auta
-        </h1>
-        <p class="hero__sub">
-          Dla właścicieli małych firm, którzy toną w&nbsp;sprawach bieżących i&nbsp;nie mają czasu na&nbsp;rozwój. Przejmuję operacyjny ciężar Twojej firmy i&nbsp;pilnuję, żebyś nie przepłacił za&nbsp;nowy samochód.
-        </p>
+        <h1 id="hero-heading">{hero.heading}</h1>
+        <p class="hero__sub">{hero.sub}</p>
         <div class="hero__ctas">
-          <a href="#kontakt" class="btn btn--amber">Umów rozmowę</a>
-          <a href="#uslugi" class="btn btn--outline-light">Zobacz cennik</a>
+          <a href={hero.ctaPrimaryHref} class="btn btn--amber">{hero.ctaPrimaryLabel}</a>
+          <a href={hero.ctaSecondaryHref} class="btn btn--outline-light">{hero.ctaSecondaryLabel}</a>
         </div>
       </div>
 
       <div class="hero__cards" aria-hidden="true">
-        {heroServices.map((service) => (
+        {hero.cards.map((card) => (
           <div class="hero__mini">
-            <div style="width:28px;height:28px;border-radius:8px;background:rgba(201,162,39,0.18);display:grid;place-items:center;color:var(--amber);font-size:13px;flex-shrink:0">{service.icon}</div>
-            <strong>{service.title}</strong>
-            <p>{service.summary}</p>
+            <div class="hero__mini-icon">{card.icon}</div>
+            <strong>{card.title}</strong>
+            <p>{card.summary}</p>
           </div>
         ))}
       </div>

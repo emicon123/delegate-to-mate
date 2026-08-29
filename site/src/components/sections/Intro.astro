@@ -1,21 +1,18 @@
 ---
-// Content source: docs/reference/mockup-build-snapshot.html — restored
-// 2026-08-28, see docs/adr/003-mockup-copy-restoration.md and
-// docs/architecture.md "Content restoration" (§3, Dla kogo). This entirely
-// replaces the prior live-site "DELEGATE TO MATE" intro paragraph + 5-tile
-// grid + "POZNAJ USŁUGI" button with the mockup's two-column framing
-// section. The "DLA KOGO" pill is removed per [EDIT #2] (pill-tag cleanup).
+import { getCollection } from 'astro:content';
+
+const intro = (await getCollection('intro'))[0]?.data;
 ---
 
 <section class="section section--cream" id="jak-to-dziala" aria-labelledby="intro-heading" style="background:#fdf8ec">
   <div class="container">
     <div class="intro__grid">
       <div>
-        <h2 id="intro-heading" class="h-section" style="margin-top:0;font-size:clamp(30px,3.6vw,42px)">Prowadzisz firmę, nie dyspozytornię.</h2>
+        <h2 id="intro-heading" class="h-section" style="margin-top:0;font-size:clamp(30px,3.6vw,42px)">{intro.heading}</h2>
       </div>
       <div>
         <p style="margin:0;color:#475569;font-size:14.5px;line-height:1.75">
-          Bez znaczenia w jakiej branży. Jesteś zmuszony do załatwiania mnóstwa spraw: terminy, dostawy, rekrutacja, komunikacja, klienci, oferty do&nbsp;sprawdzenia i&nbsp;nie zostaje czasu, żeby usiąść i&nbsp;pomyśleć o&nbsp;rozwoju firmy. Nie potrzebujesz kolejnego pracownika na&nbsp;etacie ani asystentki „do&nbsp;wszystkiego”. Potrzebujesz kogoś, kto realnie przejmie operacyjny ciężar i&nbsp;działa dla dobra Twojej firmy, jak partner biznesowy, nie podwykonawca zadań z&nbsp;listy.
+          {intro.paragraph}
         </p>
       </div>
     </div>

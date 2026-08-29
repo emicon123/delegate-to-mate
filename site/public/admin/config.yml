@@ -7,11 +7,128 @@ media_folder: "site/src/assets/uploads"
 public_folder: "/src/assets/uploads"
 
 collections:
-  # NOTE: the "services" collection was removed 2026-08-28 (mockup-copy
-  # restoration, docs/adr/003-mockup-copy-restoration.md). The two real
-  # offers (Delegate Wsparcie / Delegate Drive) are now fixed, differently
-  # -shaped pricing blocks hardcoded in site/src/components/sections/
-  # Services.astro, not a CMS-managed collection — see the comment there.
+  - name: "site_settings"
+    label: "Ustawienia strony"
+    files:
+      - label: "Hero (główny baner)"
+        name: "hero"
+        file: "site/src/content/hero/hero.md"
+        fields:
+          - { label: "Nagłówek", name: "heading", widget: "string" }
+          - { label: "Podtytuł", name: "sub", widget: "text" }
+          - { label: "CTA główny — tekst", name: "ctaPrimaryLabel", widget: "string" }
+          - { label: "CTA główny — link", name: "ctaPrimaryHref", widget: "string" }
+          - { label: "CTA drugorzędny — tekst", name: "ctaSecondaryLabel", widget: "string" }
+          - { label: "CTA drugorzędny — link", name: "ctaSecondaryHref", widget: "string" }
+          - label: "Karty hero"
+            name: "cards"
+            widget: "list"
+            fields:
+              - { label: "Ikona", name: "icon", widget: "string" }
+              - { label: "Tytuł", name: "title", widget: "string" }
+              - { label: "Opis", name: "summary", widget: "string" }
+
+      - label: "Intro — Dla kogo"
+        name: "intro"
+        file: "site/src/content/intro/intro.md"
+        fields:
+          - { label: "Nagłówek", name: "heading", widget: "string" }
+          - { label: "Paragraf", name: "paragraph", widget: "text" }
+
+      - label: "Usługa — Delegate Wsparcie"
+        name: "wsparcie"
+        file: "site/src/content/wsparcie/wsparcie.md"
+        fields:
+          - { label: "Tytuł", name: "title", widget: "string" }
+          - { label: "Wstęp", name: "standfirst", widget: "text" }
+          - { label: "Tytuł zakresu", name: "scopeTitle", widget: "string" }
+          - { label: "Elementy zakresu", name: "scopeItems", widget: "list", field: { label: "Element", name: "scopeItems", widget: "string" } }
+          - { label: "Premium — tytuł", name: "premiumTitle", widget: "string" }
+          - { label: "Premium — opis", name: "premiumDescription", widget: "text" }
+          - label: "Pakiety cenowe"
+            name: "tiers"
+            widget: "list"
+            fields:
+              - { label: "Nazwa", name: "name", widget: "string" }
+              - { label: "Cena", name: "price", widget: "string" }
+              - { label: "Godziny", name: "hours", widget: "string" }
+              - { label: "Wyróżniony", name: "highlighted", widget: "boolean", required: false }
+              - { label: "Odznaka", name: "badge", widget: "string", required: false }
+          - { label: "Bezpiecznik — etykieta", name: "bezpiecznikLabel", widget: "string" }
+          - { label: "Bezpiecznik — cena", name: "bezpiecznikPrice", widget: "string" }
+          - { label: "Bezpiecznik — dopisek", name: "bezpiecznikSuffix", widget: "text" }
+
+      - label: "Usługa — Delegate Drive"
+        name: "drive"
+        file: "site/src/content/drive/drive.md"
+        fields:
+          - { label: "Tytuł", name: "title", widget: "string" }
+          - { label: "Wstęp", name: "standfirst", widget: "text" }
+          - label: "Ścieżki zakupu"
+            name: "paths"
+            widget: "list"
+            fields:
+              - { label: "Ikona", name: "icon", widget: "string" }
+              - { label: "Kicker", name: "kicker", widget: "string" }
+              - { label: "Tytuł", name: "title", widget: "string" }
+              - { label: "Cena", name: "price", widget: "string" }
+              - { label: "Dopisek ceny", name: "priceNote", widget: "string" }
+              - { label: "Tekst przed bold", name: "before", widget: "text" }
+              - { label: "Wyróżnienie bold", name: "bold", widget: "string" }
+              - { label: "Tekst po bold", name: "after", widget: "text" }
+
+      - label: "O mnie"
+        name: "omnie"
+        file: "site/src/content/omnie/omnie.md"
+        fields:
+          - { label: "Kicker", name: "kicker", widget: "string" }
+          - { label: "Nagłówek", name: "heading", widget: "string" }
+          - { label: "Bio — akapity", name: "bio", widget: "list", field: { label: "Akapit", name: "bio", widget: "text" } }
+          - { label: "Podpis — imię", name: "signatureName", widget: "string" }
+          - { label: "Podpis — rola", name: "signatureRole", widget: "string" }
+          - { label: "CTA — tekst", name: "ctaLabel", widget: "string" }
+          - { label: "CTA — link", name: "ctaHref", widget: "string" }
+          - { label: "Alt zdjęcia", name: "photoAlt", widget: "string" }
+
+      - label: "CTA (kontakt)"
+        name: "cta"
+        file: "site/src/content/cta/cta.md"
+        fields:
+          - { label: "Nagłówek", name: "heading", widget: "string" }
+          - { label: "Podtytuł", name: "sub", widget: "text" }
+          - { label: "Ikona panelu", name: "panelIcon", widget: "string" }
+          - { label: "Tytuł panelu", name: "panelTitle", widget: "string" }
+          - { label: "Opis panelu", name: "panelBody", widget: "text" }
+          - { label: "Tytuł formularza", name: "formTitle", widget: "string" }
+          - { label: "Wstęp formularza", name: "formStandfirst", widget: "text" }
+
+      - label: "Globalne (SEO, kontakt, nagłówki)"
+        name: "site"
+        file: "site/src/content/site/site.md"
+        fields:
+          - { label: "Tytuł SEO", name: "title", widget: "string" }
+          - { label: "Opis SEO", name: "description", widget: "text" }
+          - { label: "Canonical", name: "canonical", widget: "string" }
+          - { label: "Telefon", name: "phone", widget: "string" }
+          - { label: "Telefon href", name: "phoneHref", widget: "string" }
+          - { label: "E-mail", name: "email", widget: "string" }
+          - { label: "Ulica", name: "addressStreet", widget: "string", required: false }
+          - { label: "Kod pocztowy", name: "addressPostal", widget: "string", required: false }
+          - { label: "Miasto", name: "addressCity", widget: "string", required: false }
+          - { label: "Kraj", name: "addressCountry", widget: "string", required: false }
+          - { label: "Facebook URL", name: "facebook", widget: "string", required: false }
+          - { label: "Instagram URL", name: "instagram", widget: "string", required: false }
+          - { label: "Instagram handle", name: "instagramHandle", widget: "string", required: false }
+          - { label: "Nagłówek Benefits", name: "benefitsHeading", widget: "string" }
+          - { label: "Nagłówek Opinie", name: "testimonialsHeading", widget: "string" }
+          - { label: "Nagłówek FAQ", name: "faqHeading", widget: "string" }
+          - { label: "Copyright", name: "footerCopyright", widget: "string" }
+          - label: "Nawigacja"
+            name: "nav"
+            widget: "list"
+            fields:
+              - { label: "Etykieta", name: "label", widget: "string" }
+              - { label: "Link", name: "href", widget: "string" }
 
   - name: "benefits"
     label: "Korzyści (Dlaczego)"

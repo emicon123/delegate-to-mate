@@ -2,13 +2,8 @@
 import { getCollection } from 'astro:content';
 
 const base = import.meta.env.BASE_URL;
-
-// FAQ footer link only appears once real Q&A exist — mirrors Header.astro.
 const hasFaq = (await getCollection('faq')).length > 0;
-
-// Content source: docs/reference/mockup-build-snapshot.html — restored
-// 2026-08-28, see docs/adr/003-mockup-copy-restoration.md and
-// docs/architecture.md "Content restoration" (§9, CTA+Footer).
+const site = (await getCollection('site'))[0]?.data;
 ---
 
 <footer class="site-footer" role="contentinfo" style="background:#081610;padding:36px 0 20px">
@@ -20,22 +15,22 @@ const hasFaq = (await getCollection('faq')).length > 0;
       <div>
         <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#7d89a8;font-weight:700;margin-bottom:12px">STRONA</div>
         <nav style="display:grid;gap:6px;font-size:13px">
-          <a href="#uslugi" style="color:#a8b0cc">Usługi</a>
-          <a href="#jak-to-dziala" style="color:#a8b0cc">Jak to działa</a>
-          <a href="#opinie" style="color:#a8b0cc">Opinie</a>
+          {site.nav.map((item) => (
+            <a href={item.href} style="color:#a8b0cc">{item.label}</a>
+          ))}
           {hasFaq && <a href="#faq" style="color:#a8b0cc">FAQ</a>}
         </nav>
       </div>
       <div>
         <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#7d89a8;font-weight:700;margin-bottom:12px">KONTAKT</div>
         <div style="display:grid;gap:4px;font-size:12px;color:#a8b0cc;line-height:1.6">
-          <a href="tel:+48796017986" style="color:#a8b0cc">(+48) 796 017 986</a>
-          <span>Facebook · Instagram @delegate_to_mate</span>
+          <a href={site.phoneHref} style="color:#a8b0cc">{site.phone}</a>
+          <span>Facebook · Instagram {site.instagramHandle}</span>
         </div>
       </div>
     </div>
     <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:11px;color:#5a6588">
-      <span>© 2026 Delegate to Mate. Wszelkie prawa zastrzeżone.</span>
+      <span>{site.footerCopyright}</span>
       <a href={`${base}polityka-prywatnosci/`} style="color:#5a6588">Polityka prywatności</a>
     </div>
   </div>

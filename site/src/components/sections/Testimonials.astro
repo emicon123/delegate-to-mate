@@ -1,22 +1,14 @@
 ---
 import { getCollection } from 'astro:content';
 
-// Content source: docs/architecture.md — 6 real testimonials with full
-// quotes (not the mockup's 3-card fragment version — the mockup itself
-// flags its 3 cards as incomplete `[Na życzenie: pełne cytaty...]`), wired
-// via getCollection() to src/content/testimonials/*.md. This is the one
-// section where the mockup-copy restoration (2026-08-28,
-// docs/adr/003-mockup-copy-restoration.md) does NOT apply — the live-site
-// extraction remains authoritative here, per the mockup's own disclaimer.
-// The "OPINIE" pill is removed per [EDIT #2] (pill-tag cleanup); the
-// heading/card copy is otherwise unchanged (already matched the mockup).
 const testimonials = (await getCollection('testimonials')).sort((a, b) => a.data.order - b.data.order);
+const site = (await getCollection('site'))[0]?.data;
 ---
 
 <section class="section" id="opinie" aria-labelledby="testimonials-heading" style="background:#fdf8ec">
   <div class="container">
     <div style="max-width:560px;margin:0 0 28px">
-      <h2 id="testimonials-heading" class="h-section" style="margin-top:0">Co mówią klienci</h2>
+      <h2 id="testimonials-heading" class="h-section" style="margin-top:0">{site.testimonialsHeading}</h2>
     </div>
 
     <div class="testimonials-grid">
