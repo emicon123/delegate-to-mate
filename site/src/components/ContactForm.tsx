@@ -1,71 +1,62 @@
-import { useState, type FormEvent } from 'react';
+import { useActionState } from "react";
+import { z } from "zod";
 
-const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
 const ACCESS_KEY = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY as string | undefined;
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const contactSchema = z.object({
+  name: z.string().trim().min(1, { error: "Podaj imię i nazwisko." }),
+  email: z.string().trim().min(1, { error: "Podaj adres e-mail." }).pipe(z.email({ error: "Podaj poprawny adres e-mail." })),
+  message: z.string().trim().min(10, { error: "Wiadomość jest za krótka (min. 10 znaków)." }),
+  website: z.string().optional(),
+});
 
-type FieldErrors = { name?: string; email?: string; message?: string };
-type SubmitState = 'idle' | 'submitting' | 'success' | 'error';
+type FormState = { errors: Record<string, string>; message: string; status: string } | null;
 
 export default function ContactForm() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [honeypot, setHoneypot] = useState('');
-  const [errors, setErrors] = useState<FieldErrors>({});
-  const [status, setStatus] = useState<SubmitState>('idle');
-  const [statusMessage, setStatusMessage] = useState('');
+  const [state, formAction, isPending] = useActionState(async (_prev: FormState, formData: FormData): Promise<FormState> => {
+    const raw = {
+      name: String(formData.get("name") ?? ""),
+      email: String(formData.get("email") ?? ""),
+      message: String(formData.get("message") ?? ""),
+      website: String(formData.get("website") ?? ""),
+    };
 
-  function validate(): FieldErrors {
-    const next: FieldErrors = {};
-    if (!name.trim()) next.name = 'Podaj imię i nazwisko.';
-    if (!email.trim()) next.email = 'Podaj adres e-mail.';
-    else if (!EMAIL_PATTERN.test(email.trim())) next.email = 'Podaj poprawny adres e-mail.';
-    if (!message.trim()) next.message = 'Wpisz wiadomość.';
-    else if (message.trim().length < 10) next.message = 'Wiadomość jest za krótka (min. 10 znaków).';
-    return next;
-  }
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (honeypot) {
-      setStatus('success');
-      setStatusMessage('Dziękujemy! Wiadomość została wysłana.');
-      return;
+    if (raw.website) {
+      return { status: "success", message: "Dziękujemy! Wiadomość została wysłana.", errors: {} };
     }
 
-    const fieldErrors = validate();
-    setErrors(fieldErrors);
-    if (Object.keys(fieldErrors).length > 0) {
-      setStatus('error');
-      setStatusMessage('Popraw zaznaczone pola i spróbuj ponownie.');
-      return;
+    const parsed = contactSchema.safeParse(raw);
+    if (!parsed.success) {
+      const errors: Record<string, string> = {};
+      for (const issue of parsed.error.issues) {
+        const field = String(issue.path[0] ?? "");
+        if (field && !errors[field]) errors[field] = issue.message;
+      }
+      return { status: "error", message: "Popraw zaznaczone pola i spróbuj ponownie.", errors };
     }
 
     if (!ACCESS_KEY) {
-      setStatus('error');
-      setStatusMessage('Formularz nie jest skonfigurowany (brak klucza API). Skontaktuj się telefonicznie: (+48) 796 017 986.');
-      return;
+      return {
+        status: "error",
+        message: "Formularz nie jest skonfigurowany (brak klucza API). Skontaktuj się telefonicznie: (+48) 796 017 986.",
+        errors: {},
+      };
     }
 
-    setStatus('submitting');
-    setStatusMessage('');
-
     try {
-      const formData = new FormData();
-      formData.append('access_key', ACCESS_KEY);
-      formData.append('name', name.trim());
-      formData.append('email', email.trim());
-      formData.append('message', message.trim());
-      formData.append('subject', `Nowa wiadomość z delegatetomate.pl od ${name.trim()}`);
-      formData.append('from_name', 'delegatetomate.pl');
-      formData.append('botcheck', '');
+      const submitData = new FormData();
+      submitData.append("access_key", ACCESS_KEY);
+      submitData.append("name", parsed.data.name);
+      submitData.append("email", parsed.data.email);
+      submitData.append("message", parsed.data.message);
+      submitData.append("subject", `Nowa wiadomość z delegatetomate.pl od ${parsed.data.name}`);
+      submitData.append("from_name", "delegatetomate.pl");
+      submitData.append("botcheck", "");
 
       const response = await fetch(WEB3FORMS_ENDPOINT, {
-        method: 'POST',
-        body: formData,
+        method: "POST",
+        body: submitData,
       });
 
       const data = (await response.json()) as { success: boolean; message?: string };
@@ -74,31 +65,25 @@ export default function ContactForm() {
         throw new Error(data.message || `Request failed ${response.status}`);
       }
 
-      setStatus('success');
-      setStatusMessage('Dziękujemy! Wiadomość została wysłana. Odpowiemy tego samego dnia.');
-      setName('');
-      setEmail('');
-      setMessage('');
-      setErrors({});
+      return { status: "success", message: "Dziękujemy! Wiadomość została wysłana. Odpowiemy tego samego dnia.", errors: {} };
     } catch {
-      setStatus('error');
-      setStatusMessage('Nie udało się wysłać wiadomości. Spróbuj ponownie lub zadzwoń: (+48) 796 017 986.');
+      return {
+        status: "error",
+        message: "Nie udało się wysłać wiadomości. Spróbuj ponownie lub zadzwoń: (+48) 796 017 986.",
+        errors: {},
+      };
     }
-  }
+  }, null);
+
+  const errors = state?.errors ?? {};
+  const status = state?.status;
+  const statusMessage = state?.message ?? "";
 
   return (
-    <form noValidate onSubmit={handleSubmit} aria-describedby="form-status">
-      <div style={{ position: 'absolute', left: '-5000px', top: 'auto', width: 1, height: 1, overflow: 'hidden' }} aria-hidden="true">
+    <form noValidate action={formAction} aria-describedby="form-status">
+      <div style={{ position: "absolute", left: "-5000px", top: "auto", width: 1, height: 1, overflow: "hidden" }} aria-hidden="true">
         <label htmlFor="contact-website">Nie wypełniaj</label>
-        <input
-          id="contact-website"
-          name="website"
-          type="text"
-          tabIndex={-1}
-          autoComplete="off"
-          value={honeypot}
-          onChange={(e) => setHoneypot(e.target.value)}
-        />
+        <input type="text" name="website" id="contact-website" tabIndex={-1} autoComplete="off" style={{ display: "none" }} />
       </div>
 
       <div>
@@ -108,10 +93,8 @@ export default function ContactForm() {
           name="name"
           type="text"
           autoComplete="name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
           aria-invalid={Boolean(errors.name)}
-          aria-describedby={errors.name ? 'contact-name-error' : undefined}
+          aria-describedby={errors.name ? "contact-name-error" : undefined}
           required
         />
         {errors.name && (
@@ -128,10 +111,8 @@ export default function ContactForm() {
           name="email"
           type="email"
           autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
           aria-invalid={Boolean(errors.email)}
-          aria-describedby={errors.email ? 'contact-email-error' : undefined}
+          aria-describedby={errors.email ? "contact-email-error" : undefined}
           required
         />
         {errors.email && (
@@ -147,10 +128,8 @@ export default function ContactForm() {
           id="contact-message"
           name="message"
           rows={5}
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
           aria-invalid={Boolean(errors.message)}
-          aria-describedby={errors.message ? 'contact-message-error' : undefined}
+          aria-describedby={errors.message ? "contact-message-error" : undefined}
           required
         />
         {errors.message && (
@@ -160,20 +139,24 @@ export default function ContactForm() {
         )}
       </div>
 
-      <button type="submit" disabled={status === 'submitting'} className="btn btn--amber" style={{ width: '100%', marginTop: 6 }}>
-        {status === 'submitting' ? 'Wysyłanie…' : 'Wyślij wiadomość'}
+      <button type="submit" disabled={isPending} className="btn btn--amber" style={{ width: "100%", marginTop: 6 }}>
+        {isPending ? "Wysyłanie…" : "Wyślij wiadomość"}
       </button>
 
-      <p style={{ margin: '10px 0 0', fontSize: 12, color: '#64748b', textAlign: 'center' }}>
-        Wysyłając, akceptujesz <a href={`${import.meta.env.BASE_URL}polityka-prywatnosci/`} style={{ textDecoration: 'underline', textUnderlineOffset: 3 }}>politykę prywatności</a>.
+      <p style={{ margin: "10px 0 0", fontSize: 12, color: "#64748b", textAlign: "center" }}>
+        Wysyłając, akceptujesz{" "}
+        <a href={`${import.meta.env.BASE_URL}polityka-prywatnosci/`} style={{ textDecoration: "underline", textUnderlineOffset: 3 }}>
+          politykę prywatności
+        </a>
+        .
       </p>
 
-      {status === 'success' && (
+      {status === "success" && (
         <p id="form-status" className="form-status form-status--success" role="status">
           {statusMessage}
         </p>
       )}
-      {status === 'error' && (
+      {status === "error" && (
         <p id="form-status" className="form-status form-status--error" role="alert">
           {statusMessage}
         </p>
